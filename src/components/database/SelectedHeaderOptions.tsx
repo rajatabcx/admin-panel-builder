@@ -1,6 +1,7 @@
 import React from 'react';
-import { Button } from '../ui/button';
+import { Button } from '@/components/ui/button';
 import { FileSpreadsheet, Trash2 } from 'lucide-react';
+import { SidebarTrigger } from '@/components/ui/sidebar';
 
 export function SelectedHeaderOptions({
   selected,
@@ -11,6 +12,8 @@ export function SelectedHeaderOptions({
 }) {
   return (
     <div className='flex items-center gap-2 px-4 py-3 w-full border-b'>
+      <SidebarTrigger className='block md:hidden' />
+
       <Button
         variant='destructive'
         className='flex items-center gap-2'

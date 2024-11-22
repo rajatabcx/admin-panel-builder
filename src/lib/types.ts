@@ -14,3 +14,9 @@ export interface NLQResponseEvent {
   type: 'TEXT' | 'TABLE';
   payload: string | Array<Record<string, any>>;
 }
+
+type SortingType = 'ASC' | 'DESC';
+export type SortingColumn = {
+  name: string;
+  type: SortingType;
+};

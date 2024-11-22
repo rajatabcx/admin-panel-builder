@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { ArrowLeft, ArrowRight } from 'lucide-react';
+import { ArrowLeft, ArrowRight, RefreshCcw } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -9,6 +9,8 @@ import {
   DropdownMenuRadioItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { useQueryClient } from '@tanstack/react-query';
+import { cn } from '@/lib/utils';
 
 export function FooterOptionsMenu({
   pagination,
@@ -28,6 +30,8 @@ export function FooterOptionsMenu({
     pageCount,
   });
 
+  const queryClient = useQueryClient();
+
   useEffect(() => {
     if (!!total) {
       setPaginationState((prev) => ({ ...prev, total }));
@@ -37,60 +41,77 @@ export function FooterOptionsMenu({
     }
   }, [total, pageCount]);
 
-  return (
-    <div className='flex items-center justify-end w-full px-4 py-2 border-t gap-2'>
-      <Button
-        variant='outline'
-        size='icon'
-        disabled={pagination.page === 1 || isLoading}
-        onClick={() => {
-          setPagination({ ...pagination, page: pagination.page - 1 });
-        }}
-      >
-        <ArrowLeft className='w-4 h-4' />
-      </Button>
-      <span className='text-xs text-muted-foreground'>
-        page {pagination.page} of{' '}
-        {!paginationState.pageCount ? 1 : paginationState.pageCount}
-      </span>
-      <Button
-        variant='outline'
-        size='icon'
-        disabled={
-          !paginationState.pageCount ||
-          pagination.page === paginationState.pageCount ||
-          isLoading
-        }
-        onClick={() => {
-          setPagination({ ...pagination, page: pagination.page + 1 });
-        }}
-      >
-        <ArrowRight className='w-4 h-4' />
-      </Button>
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button variant='outline' size='sm' disabled={isLoading}>
-            {pagination.limit} Rows
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent>
-          <DropdownMenuRadioGroup
-            value={pagination.limit.toString()}
-            onValueChange={(value) => {
-              setPagination({ page: 1, limit: Number(value) });
-            }}
-          >
-            <DropdownMenuRadioItem value='50'>50</DropdownMenuRadioItem>
-            <DropdownMenuRadioItem value='100'>100</DropdownMenuRadioItem>
-            <DropdownMenuRadioItem value='250'>250</DropdownMenuRadioItem>
-            <DropdownMenuRadioItem value='500'>500</DropdownMenuRadioItem>
-          </DropdownMenuRadioGroup>
-        </DropdownMenuContent>
-      </DropdownMenu>
+  const handleRefresh = () => {
+    queryClient.invalidateQueries({ queryKey: ['rows'] });
+  };
 
-      <span className='text-xs text-muted-foreground'>
-        {paginationState.total} rows
-      </span>
+  return (
+    <div className='flex items-center justify-between w-full px-4 py-2 border-t gap-2'>
+      <Button
+        variant='ghost'
+        size='sm'
+        onClick={handleRefresh}
+        disabled={isLoading}
+      >
+        <RefreshCcw
+          className={cn('w-4 h-4', isLoading ? 'animate-spin' : null)}
+        />{' '}
+        Refresh
+      </Button>
+      <div className='flex items-center gap-2'>
+        <Button
+          variant='outline'
+          size='icon'
+          disabled={pagination.page === 1 || isLoading}
+          onClick={() => {
+            setPagination({ ...pagination, page: pagination.page - 1 });
+          }}
+        >
+          <ArrowLeft className='w-4 h-4' />
+        </Button>
+        <span className='text-xs text-muted-foreground'>
+          page {pagination.page} of{' '}
+          {!paginationState.pageCount ? 1 : paginationState.pageCount}
+        </span>
+        <Button
+          variant='outline'
+          size='icon'
+          disabled={
+            !paginationState.pageCount ||
+            pagination.page === paginationState.pageCount ||
+            isLoading
+          }
+          onClick={() => {
+            setPagination({ ...pagination, page: pagination.page + 1 });
+          }}
+        >
+          <ArrowRight className='w-4 h-4' />
+        </Button>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant='outline' size='sm' disabled={isLoading}>
+              {pagination.limit} Rows
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent>
+            <DropdownMenuRadioGroup
+              value={pagination.limit.toString()}
+              onValueChange={(value) => {
+                setPagination({ page: 1, limit: Number(value) });
+              }}
+            >
+              <DropdownMenuRadioItem value='50'>50</DropdownMenuRadioItem>
+              <DropdownMenuRadioItem value='100'>100</DropdownMenuRadioItem>
+              <DropdownMenuRadioItem value='250'>250</DropdownMenuRadioItem>
+              <DropdownMenuRadioItem value='500'>500</DropdownMenuRadioItem>
+            </DropdownMenuRadioGroup>
+          </DropdownMenuContent>
+        </DropdownMenu>
+
+        <span className='text-xs text-muted-foreground'>
+          {paginationState.total} rows
+        </span>
+      </div>
     </div>
   );
 }

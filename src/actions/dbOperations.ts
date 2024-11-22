@@ -1,16 +1,23 @@
 'use server';
 
-import { ActionResponse } from '@/lib/types';
+import { ActionResponse, SortingColumn } from '@/lib/types';
 import { getDbUrl } from './metadata';
 import { ResponseType } from '@/lib/constants';
 import { Client } from 'pg';
 
-export async function rows(
-  schema: string,
-  table: string,
-  page: number = 1,
-  pageSize: number = 10
-): Promise<
+export async function rows({
+  schema,
+  table,
+  sortingColumns = [],
+  page = 1,
+  pageSize = 10,
+}: {
+  schema: string;
+  table: string;
+  page?: number;
+  pageSize?: number;
+  sortingColumns?: SortingColumn[];
+}): Promise<
   ActionResponse & {
     data: any[];
     total: number;
@@ -64,8 +71,15 @@ export async function rows(
     const dataQuery = `
         SELECT *
         FROM ${schema}.${table}
+        ${
+          sortingColumns.length
+            ? `ORDER BY ${sortingColumns
+                .map((column) => `${column.name} ${column.type.toUpperCase()}`)
+                .join(', ')}`
+            : ''
+        }
         LIMIT ${pageSize}
-        OFFSET ${offset}
+        OFFSET ${offset};
       `;
     const dataResult = await client.query(dataQuery);
 

@@ -1,21 +1,30 @@
 import React from 'react';
-import { ArrowUpDown, Filter, LayoutGrid, Plus, Table } from 'lucide-react';
+import { Filter, LayoutGrid, Plus, Table } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { Toggle } from '@/components/ui/toggle';
 import { cn } from '@/lib/utils';
+import SortBuilder from './SortBuilder';
+import { SidebarTrigger } from '@/components/ui/sidebar';
+import { SortingColumn } from '@/lib/types';
 
 export function HeaderOptionsMenu({
   view,
   setView,
+  columns,
+  handleApplySorting,
 }: {
   view: 'table' | 'card';
   setView: (view: 'table' | 'card') => void;
+  columns: string[];
+  handleApplySorting: (data: SortingColumn[]) => void;
 }) {
   return (
     <div className='flex items-center justify-between w-full px-4 py-3 border-b'>
       <div className='flex items-center gap-2'>
+        <SidebarTrigger className='block md:hidden' />
+
         <Toggle
           variant='outline'
           size='sm'
@@ -45,9 +54,10 @@ export function HeaderOptionsMenu({
         <Button variant='ghost' size='sm'>
           <Filter className='w-4 h-4' />
         </Button>
-        <Button variant='ghost' size='sm'>
-          <ArrowUpDown className='w-4 h-4' />
-        </Button>
+        <SortBuilder
+          columns={columns}
+          handleApplySorting={handleApplySorting}
+        />
         <Separator orientation='vertical' className='h-4' />
         <Button size='sm'>
           <Plus className='w-4 h-4' /> Insert

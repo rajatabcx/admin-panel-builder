@@ -71,7 +71,6 @@ export async function relation(
   `;
 
     const result = await client.query(query, [schema]);
-    console.log(result.rows[0]);
     return {
       type: ResponseType.SUCCESS,
       message: 'Relation fetched successfully',
@@ -112,11 +111,10 @@ export async function relation(
         return acc;
       }, {}),
     };
-  } catch (error) {
-    console.error(error);
+  } catch (error: any) {
     return {
       type: ResponseType.ERROR,
-      message: 'Error fetching relation',
+      message: error.message,
       data: {},
     };
   } finally {

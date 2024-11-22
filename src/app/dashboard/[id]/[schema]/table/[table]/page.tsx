@@ -9,6 +9,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { SelectedHeaderOptions } from '@/components/database/SelectedHeaderOptions';
 import { useRows } from '@/hooks/dbOpertions.hooks';
 import { convertRowsToCsv, handleDownload } from '@/lib/utils';
+import { SortingColumn } from '@/lib/types';
 
 export default function TablePage() {
   const { table, schema } = useParams<{
@@ -23,22 +24,27 @@ export default function TablePage() {
   });
   const [view, setView] = useState<'table' | 'card'>('table');
   const [selected, setSelected] = useState<string[]>([]);
+  const [sortingColumns, setSortingColumns] = useState<SortingColumn[]>([]);
 
-  const { data, isLoading } = useRows(
+  const { data, isLoading, isFetching } = useRows({
     schema,
     table,
-    pagination.page,
-    pagination.limit,
-    !!schema && !!table
-  );
+    page: pagination.page,
+    limit: pagination.limit,
+    sortingColumns,
+    enabled: !!schema && !!table,
+  });
 
   const handleExportCsv = () => {
     const csv = convertRowsToCsv(
       data?.columns.map((column) => column.name) || [],
       data?.data.filter((row) => selected.includes(row.id)) || []
     );
-    console.log(csv);
     handleDownload(csv, `${table}_rows.csv`);
+  };
+
+  const handleApplySorting = (data: SortingColumn[]) => {
+    setSortingColumns(data);
   };
 
   return (
@@ -50,7 +56,12 @@ export default function TablePage() {
           handleExportCsv={handleExportCsv}
         />
       ) : (
-        <HeaderOptionsMenu view={view} setView={setView} />
+        <HeaderOptionsMenu
+          view={view}
+          setView={setView}
+          columns={data?.columns.map((column) => column.name) || []}
+          handleApplySorting={handleApplySorting}
+        />
       )}
       {/*main table  */}
       <div className='flex-1 overflow-auto'>
@@ -77,7 +88,7 @@ export default function TablePage() {
         setPagination={setPagination}
         total={data?.total || 0}
         pageCount={data?.pageCount || 0}
-        isLoading={isLoading}
+        isLoading={isLoading || isFetching}
       />
     </div>
   );

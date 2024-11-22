@@ -56,3 +56,29 @@ export const handleDownload = (csvData: string, fileName: string) => {
   // Clean up the URL object
   window.URL.revokeObjectURL(url);
 };
+
+// postgres type to form input type mapping
+export const pgTypeMapping: Record<string, string> = {
+  text: 'text',
+  varchar: 'text',
+  character: 'text',
+  integer: 'number',
+  int4: 'number',
+  bigint: 'number',
+  numeric: 'number',
+  decimal: 'number',
+  boolean: 'checkbox',
+  bool: 'checkbox',
+  date: 'date',
+  timestamp: 'datetime-local',
+  timestamptz: 'datetime-local',
+  time: 'time',
+  json: 'textarea',
+  jsonb: 'textarea',
+  uuid: 'text',
+};
+
+export enum SortingType {
+  ASC = 'ASC',
+  DESC = 'DESC',
+}

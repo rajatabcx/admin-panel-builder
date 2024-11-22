@@ -1,17 +1,32 @@
 import { deleteRows, rows } from '@/actions/dbOperations';
 import { useMutation, useQuery } from '@tanstack/react-query';
+import { SortingColumn } from '@/lib/types';
 
-export const useRows = (
-  schema: string,
-  table: string,
-  page: number,
-  limit: number,
-  enabled: boolean
-) => {
+export const useRows = ({
+  enabled,
+  limit,
+  page,
+  schema,
+  sortingColumns,
+  table,
+}: {
+  schema: string;
+  table: string;
+  page: number;
+  limit: number;
+  sortingColumns: SortingColumn[];
+  enabled: boolean;
+}) => {
   return useQuery({
-    queryKey: ['tableData', schema, table, page, limit],
+    queryKey: ['rows', schema, table, page, limit, sortingColumns],
     queryFn: async () => {
-      const response = await rows(schema, table, page, limit);
+      const response = await rows({
+        schema,
+        table,
+        page,
+        pageSize: limit,
+        sortingColumns,
+      });
       return response;
     },
     enabled,
