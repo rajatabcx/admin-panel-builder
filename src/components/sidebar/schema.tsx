@@ -1,6 +1,6 @@
 'use client';
 
-import { TableProperties } from 'lucide-react';
+import { Database, TableProperties } from 'lucide-react';
 
 import { Collapsible, CollapsibleTrigger } from '@/components/ui/collapsible';
 import {
@@ -15,7 +15,8 @@ import {
 import { SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
 import { useState } from 'react';
 import { Tables } from './tables';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
+import Link from 'next/link';
 
 export function Schema({
   schemas,
@@ -24,6 +25,7 @@ export function Schema({
   schemas: string[];
   defaultSchema: string;
 }) {
+  const router = useRouter();
   const { schema } = useParams<{ schema: string }>();
 
   const [selectedSchema, setSelectedSchema] = useState(schema || defaultSchema);
@@ -32,7 +34,10 @@ export function Schema({
     <>
       <Select
         value={selectedSchema}
-        onValueChange={(value) => setSelectedSchema(value)}
+        onValueChange={(value) => {
+          setSelectedSchema(value);
+          router.push(`/dashboard/1/${value}`);
+        }}
       >
         <SelectTrigger>
           <SelectValue placeholder='Select a schema' />
@@ -52,6 +57,14 @@ export function Schema({
           </SelectGroup>
         </SelectContent>
       </Select>
+      <SidebarMenuItem>
+        <SidebarMenuButton tooltip='Database' asChild>
+          <Link href={`/dashboard/1/${selectedSchema}/database`}>
+            <Database className='size-5' />
+            <span>Database</span>
+          </Link>
+        </SidebarMenuButton>
+      </SidebarMenuItem>
       <Collapsible asChild open={true} className='group/collapsible'>
         <SidebarMenuItem>
           <CollapsibleTrigger asChild>

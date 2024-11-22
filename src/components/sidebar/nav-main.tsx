@@ -6,7 +6,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from '@/components/ui/sidebar';
-import { Database, Settings, Sparkles } from 'lucide-react';
+import { Settings, Sparkles } from 'lucide-react';
 
 const navMainData = [
   {
@@ -18,11 +18,6 @@ const navMainData = [
     name: 'Settings',
     url: '#',
     icon: Settings,
-  },
-  {
-    name: 'Database',
-    url: '/dashboard/1/database',
-    icon: Database,
   },
 ];
 
