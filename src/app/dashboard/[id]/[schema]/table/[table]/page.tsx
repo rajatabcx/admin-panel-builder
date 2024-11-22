@@ -25,6 +25,7 @@ export default function TablePage() {
   const [view, setView] = useState<'table' | 'card'>('table');
   const [selected, setSelected] = useState<string[]>([]);
   const [sortingColumns, setSortingColumns] = useState<SortingColumn[]>([]);
+  const [filteredColumns] = useState<any[]>([]);
 
   const { data, isLoading, isFetching } = useRows({
     schema,
@@ -61,6 +62,8 @@ export default function TablePage() {
           setView={setView}
           columns={data?.columns.map((column) => column.name) || []}
           handleApplySorting={handleApplySorting}
+          filteredColumns={filteredColumns.length}
+          sortingColumns={sortingColumns.length}
         />
       )}
       {/*main table  */}

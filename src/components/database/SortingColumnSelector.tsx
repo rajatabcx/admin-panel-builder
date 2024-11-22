@@ -26,14 +26,14 @@ export function SortingColumnSelector({
         <p className='text-xs font-medium'>Pick a column for sorting</p>
         <ChevronDown className='w-4 h-4' />
       </DropdownMenuTrigger>
-      <DropdownMenuContent className='w-48 bg-secondary'>
+      <DropdownMenuContent className='w-48'>
         {columns
           .filter((column) => !selectedColumn.some((c) => c.name === column))
           .map((column) => (
             <DropdownMenuItem asChild key={column}>
               <Button
                 variant='ghost'
-                className='w-full hover:bg-primary-foreground justify-start cursor-pointer text-xs'
+                className='w-full justify-start cursor-pointer text-xs'
                 size='sm'
                 onClick={() => {
                   setSelectedColumn([

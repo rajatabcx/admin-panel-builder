@@ -16,9 +16,11 @@ import { SortingType } from '@/lib/utils';
 export default function SortBuilder({
   columns,
   handleApplySorting,
+  sortingColumns,
 }: {
   columns: string[];
   handleApplySorting: (data: SortingColumn[]) => void;
+  sortingColumns: number;
 }) {
   const [selectedColumn, setSelectedColumn] = useState<SortingColumn[]>([]);
   const [isOpen, setIsOpen] = useState(false);
@@ -26,8 +28,9 @@ export default function SortBuilder({
   return (
     <Popover open={isOpen} onOpenChange={setIsOpen}>
       <PopoverTrigger asChild>
-        <Button variant='ghost' size='sm'>
-          <ArrowUpDown className='w-4 h-4' />
+        <Button variant={!!sortingColumns ? 'outline' : 'ghost'} size='sm'>
+          <ArrowUpDown className='w-4 h-4' />{' '}
+          {!!sortingColumns ? `Sorted by ${sortingColumns} rules` : 'Sort'}
         </Button>
       </PopoverTrigger>
       <PopoverContent
@@ -91,7 +94,7 @@ export default function SortBuilder({
               No sort applied to this view
             </h1>
             <p className='text-xs text-muted-foreground'>
-              Add a column below to sort the view by.
+              Add a column below to sort the view.
             </p>
           </>
         )}

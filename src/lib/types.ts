@@ -20,3 +20,21 @@ export type SortingColumn = {
   name: string;
   type: SortingType;
 };
+
+export type FilterOperatorSymbol =
+  | '='
+  | '<>'
+  | '>'
+  | '<'
+  | '>='
+  | '<='
+  | '[~~]'
+  | '[~~*]'
+  | '[in]'
+  | '[is]';
+
+export type FilterColumn = {
+  name: string;
+  operator: FilterOperatorSymbol;
+  value: string;
+};
