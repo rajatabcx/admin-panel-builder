@@ -13,7 +13,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
-import { useState } from 'react';
+import { useEffect } from 'react';
 import { Tables } from './tables';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
@@ -26,16 +26,21 @@ export function Schema({
   defaultSchema: string;
 }) {
   const router = useRouter();
-  const { schema } = useParams<{ schema: string }>();
+  const { schema } = useParams<{ schema: string; id: string }>();
 
-  const [selectedSchema, setSelectedSchema] = useState(schema || defaultSchema);
+  useEffect(() => {
+    // if no schema is provided and defaultSchema is provided, redirect to the default schema
+    if (!schema && !!defaultSchema) {
+      router.push(`/dashboard/1/${defaultSchema}`);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [schema, defaultSchema]);
 
   return (
     <>
       <Select
-        value={selectedSchema}
+        value={schema}
         onValueChange={(value) => {
-          setSelectedSchema(value);
           router.push(`/dashboard/1/${value}`);
         }}
       >
@@ -59,7 +64,7 @@ export function Schema({
       </Select>
       <SidebarMenuItem>
         <SidebarMenuButton tooltip='Database' asChild>
-          <Link href={`/dashboard/1/${selectedSchema}/database`}>
+          <Link href={`/dashboard/1/${schema}/database`}>
             <Database className='size-5' />
             <span>Database</span>
           </Link>
@@ -73,7 +78,7 @@ export function Schema({
               <span>Tables</span>
             </SidebarMenuButton>
           </CollapsibleTrigger>
-          <Tables selectedSchema={selectedSchema} />
+          <Tables selectedSchema={schema} />
         </SidebarMenuItem>
       </Collapsible>
     </>

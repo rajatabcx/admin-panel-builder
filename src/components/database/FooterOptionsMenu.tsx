@@ -50,12 +50,17 @@ export function FooterOptionsMenu({
         <ArrowLeft className='w-4 h-4' />
       </Button>
       <span className='text-xs text-muted-foreground'>
-        page {pagination.page} of {paginationState.pageCount}
+        page {pagination.page} of{' '}
+        {!paginationState.pageCount ? 1 : paginationState.pageCount}
       </span>
       <Button
         variant='outline'
         size='icon'
-        disabled={pagination.page === pageCount || isLoading}
+        disabled={
+          !paginationState.pageCount ||
+          pagination.page === paginationState.pageCount ||
+          isLoading
+        }
         onClick={() => {
           setPagination({ ...pagination, page: pagination.page + 1 });
         }}
