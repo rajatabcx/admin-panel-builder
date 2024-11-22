@@ -43,7 +43,7 @@ const viewsData = {
   ],
 };
 
-export function NavViews({ id }: { id: string }) {
+export function NavViews({}: { id: string }) {
   return (
     <SidebarGroup>
       <SidebarGroupLabel>Dashboards</SidebarGroupLabel>
