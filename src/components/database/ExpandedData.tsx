@@ -17,11 +17,10 @@ export default function ExpandedData({ data }: { data: any }) {
       <SheetContent className='w-full sm:max-w-2xl'>
         <SheetHeader>
           <SheetTitle className='text-left'>Expanded Data</SheetTitle>
-          <SheetDescription>
-            <pre className='text-sm text-muted-foreground whitespace-break-spaces text-left'>
-              {JSON.stringify(data, null, 2)}
-            </pre>
-          </SheetDescription>
+          <SheetDescription>Some description will go here</SheetDescription>
+          <pre className='text-sm text-muted-foreground whitespace-break-spaces text-left'>
+            {JSON.stringify(data, null, 2)}
+          </pre>
         </SheetHeader>
       </SheetContent>
     </Sheet>

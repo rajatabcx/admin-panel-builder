@@ -21,7 +21,7 @@ const navMainData = [
   },
   {
     name: 'Database',
-    url: '#',
+    url: '/dashboard/1/database',
     icon: Database,
   },
 ];

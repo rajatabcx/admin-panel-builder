@@ -30,3 +30,29 @@ export const formatCellValue = (value: any, type: string) => {
       return String(value);
   }
 };
+
+export const convertRowsToCsv = (headers: string[], rows: any[]) => {
+  if (!rows || rows.length === 0) return '';
+
+  const csvHeaders = headers.join(','); // Extract column headers
+  const csvRows = rows
+    .map((row) => Object.values(row).join(',')) // Convert each row to CSV format
+    .join('\n');
+
+  return `${csvHeaders}\n${csvRows}`;
+};
+
+export const handleDownload = (csvData: string, fileName: string) => {
+  // Create a Blob with CSV data
+  const blob = new Blob([csvData], { type: 'text/csv' });
+  const url = window.URL.createObjectURL(blob);
+
+  // Create an anchor tag and trigger download
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = fileName;
+  a.click();
+
+  // Clean up the URL object
+  window.URL.revokeObjectURL(url);
+};

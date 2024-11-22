@@ -14,7 +14,7 @@ export function HeaderOptionsMenu({
   setView: (view: 'table' | 'card') => void;
 }) {
   return (
-    <div className='flex items-center justify-between w-full px-4 py-2 border-b'>
+    <div className='flex items-center justify-between w-full px-4 py-3 border-b'>
       <div className='flex items-center gap-2'>
         <Toggle
           variant='outline'
@@ -42,10 +42,10 @@ export function HeaderOptionsMenu({
         </Toggle>
       </div>
       <div className='flex items-center gap-2'>
-        <Button variant='ghost' size='icon'>
+        <Button variant='ghost' size='sm'>
           <Filter className='w-4 h-4' />
         </Button>
-        <Button variant='ghost' size='icon'>
+        <Button variant='ghost' size='sm'>
           <ArrowUpDown className='w-4 h-4' />
         </Button>
         <Separator orientation='vertical' className='h-4' />

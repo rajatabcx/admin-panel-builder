@@ -8,28 +8,48 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { formatCellValue } from '@/lib/utils';
+import { cn, formatCellValue } from '@/lib/utils';
 import { Checkbox } from '@/components/ui/checkbox';
 import ExpandedData from './ExpandedData';
 
 export function MainTable({
   data,
   headers,
+  selected,
+  setSelected,
 }: {
   data: any[];
   headers: { name: string; type: string }[];
+  selected: string[];
+  setSelected: (selected: string[]) => void;
 }) {
   return (
-    <Table>
+    <Table className='border-l'>
       <TableHeader>
         <TableRow>
-          <TableHead className='w-[65px] border-l border-r'>#</TableHead>
+          <TableHead className='border-l border-r'>
+            <div className='w-[65px]'>
+              <Checkbox
+                checked={
+                  selected.length
+                    ? selected.length === data.length
+                      ? true
+                      : 'indeterminate'
+                    : false
+                }
+                onCheckedChange={(checked) => {
+                  if (checked) {
+                    setSelected(data.map((row) => row.id));
+                  } else {
+                    setSelected([]);
+                  }
+                }}
+              />
+            </div>
+          </TableHead>
           {headers.map((header) => (
-            <TableHead
-              key={header.name}
-              className='w-[250px] border-r border-l'
-            >
-              <p className='flex items-center gap-2'>
+            <TableHead key={header.name} className='border-r border-l'>
+              <p className='flex items-center gap-2 w-[250px] truncate'>
                 {header.name}
                 <span className='text-xs text-muted-foreground'>
                   ({header.type})
@@ -40,20 +60,38 @@ export function MainTable({
         </TableRow>
       </TableHeader>
       <TableBody>
-        {data.map((row) => (
+        {data.map((row, index) => (
           <TableRow key={row.id}>
-            <TableCell className='w-[65px] group border-l border-r'>
-              <div className='flex items-center gap-3'>
-                <Checkbox className='border-muted-foreground' />
+            <TableCell
+              className={cn(
+                'group border-l border-r',
+                index === data.length - 1 ? 'border-b' : ''
+              )}
+            >
+              <div className='flex items-center gap-4 w-[65px]'>
+                <Checkbox
+                  className='border-muted-foreground'
+                  checked={selected.includes(row.id)}
+                  onCheckedChange={(checked) => {
+                    setSelected(
+                      checked
+                        ? [...selected, row.id]
+                        : selected.filter((id) => id !== row.id)
+                    );
+                  }}
+                />
                 <ExpandedData data={row} />
               </div>
             </TableCell>
             {headers.map((header) => (
               <TableCell
                 key={header.name}
-                className='w-[250px] truncate border-r border-l'
+                className={cn(
+                  'truncate border-r border-l',
+                  index === data.length - 1 ? 'border-b' : ''
+                )}
               >
-                <div className='line-clamp-1'>
+                <div className='w-[250px] truncate'>
                   {formatCellValue(row[header.name], header.type)}
                 </div>
               </TableCell>

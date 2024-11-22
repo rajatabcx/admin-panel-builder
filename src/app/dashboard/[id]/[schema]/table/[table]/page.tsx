@@ -6,7 +6,9 @@ import { FooterOptionsMenu } from '@/components/database/FooterOptionsMenu';
 import { HeaderOptionsMenu } from '@/components/database/HeaderOptionsMenu';
 import { MainTable } from '@/components/database/MainTable';
 import { Skeleton } from '@/components/ui/skeleton';
-import { useTableData } from '@/hooks/metadata.hooks';
+import { SelectedHeaderOptions } from '@/components/database/SelectedHeaderOptions';
+import { useRows } from '@/hooks/dbOpertions.hooks';
+import { convertRowsToCsv, handleDownload } from '@/lib/utils';
 
 export default function TablePage() {
   const { table, schema } = useParams<{
@@ -20,8 +22,9 @@ export default function TablePage() {
     limit: 100,
   });
   const [view, setView] = useState<'table' | 'card'>('table');
+  const [selected, setSelected] = useState<string[]>([]);
 
-  const { data, isLoading } = useTableData(
+  const { data, isLoading } = useRows(
     schema,
     table,
     pagination.page,
@@ -29,10 +32,26 @@ export default function TablePage() {
     !!schema && !!table
   );
 
+  const handleExportCsv = () => {
+    const csv = convertRowsToCsv(
+      data?.columns.map((column) => column.name) || [],
+      data?.data.filter((row) => selected.includes(row.id)) || []
+    );
+    console.log(csv);
+    handleDownload(csv, `${table}_rows.csv`);
+  };
+
   return (
     <div className='w-full h-screen flex flex-col'>
       {/* header options menu */}
-      <HeaderOptionsMenu view={view} setView={setView} />
+      {!!selected.length ? (
+        <SelectedHeaderOptions
+          selected={selected}
+          handleExportCsv={handleExportCsv}
+        />
+      ) : (
+        <HeaderOptionsMenu view={view} setView={setView} />
+      )}
       {/*main table  */}
       <div className='flex-1 overflow-auto'>
         {isLoading ? (
@@ -44,7 +63,12 @@ export default function TablePage() {
             <Skeleton className='w-[20%] h-6' />
           </div>
         ) : (
-          <MainTable data={data?.data || []} headers={data?.columns || []} />
+          <MainTable
+            data={data?.data || []}
+            headers={data?.columns || []}
+            selected={selected}
+            setSelected={setSelected}
+          />
         )}
       </div>
       {/* footer options menu */}
