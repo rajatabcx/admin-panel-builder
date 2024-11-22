@@ -28,9 +28,9 @@ export default function ChatPage() {
     <div className='w-full h-screen flex flex-col p-4'>
       <div className='flex-1 overflow-auto'>
         {status ? (
-          <span className='animate-pulse text-sm text-muted-foreground'>
-            {status}
-          </span>
+          <div className='inline-flex items-center animate-pulse'>
+            <span>✨ {status}...</span>
+          </div>
         ) : null}
         {message ? <p>{JSON.stringify(message, null, 2)}</p> : null}
       </div>

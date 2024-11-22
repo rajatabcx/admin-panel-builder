@@ -24,22 +24,22 @@ async function* doNlq(
   console.log(`Started processing query: ${query}`);
   // Simulate processing steps
   yield { kind: 'UPDATE', status: 'Analyzing your question...' };
-  await new Promise((resolve) => setTimeout(resolve, 3500));
+  await new Promise((resolve) => setTimeout(resolve, 1000));
 
   yield { kind: 'UPDATE', status: 'Generating SQL query...' };
-  await new Promise((resolve) => setTimeout(resolve, 4000));
+  await new Promise((resolve) => setTimeout(resolve, 1500));
 
   yield { kind: 'UPDATE', status: 'Executing query...' };
-  await new Promise((resolve) => setTimeout(resolve, 6500));
+  await new Promise((resolve) => setTimeout(resolve, 1200));
 
-  yield { kind: 'UPDATE', status: 'Error Occured...' };
-  await new Promise((resolve) => setTimeout(resolve, 3000));
+  yield { kind: 'UPDATE', status: 'Error Occurred...' };
+  await new Promise((resolve) => setTimeout(resolve, 1200));
 
   yield { kind: 'UPDATE', status: 'Refining query...' };
-  await new Promise((resolve) => setTimeout(resolve, 6500));
+  await new Promise((resolve) => setTimeout(resolve, 2000));
 
   yield { kind: 'UPDATE', status: 'Re-executing query...' };
-  await new Promise((resolve) => setTimeout(resolve, 6500));
+  await new Promise((resolve) => setTimeout(resolve, 1000));
 
   // Simulate a response
   yield {

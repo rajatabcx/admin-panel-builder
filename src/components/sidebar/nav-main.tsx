@@ -11,7 +11,7 @@ import { Settings, Sparkles } from 'lucide-react';
 const navMainData = [
   {
     name: 'Ask AI',
-    url: '/dashboard/1/public/chat',
+    url: '/dashboard/1/chat',
     icon: Sparkles,
   },
   {

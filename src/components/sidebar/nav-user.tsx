@@ -6,7 +6,9 @@ import {
   ChevronsUpDown,
   CreditCard,
   LogOut,
+  MoonStar,
   Sparkles,
+  Sun,
 } from 'lucide-react';
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -25,6 +27,7 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from '@/components/ui/sidebar';
+import { useTheme } from 'next-themes';
 
 const user = {
   name: 'Rajat Mondal',
@@ -34,6 +37,8 @@ const user = {
 
 export function NavUser() {
   const { isMobile } = useSidebar();
+  const { theme, setTheme } = useTheme();
+  console.log(theme);
 
   return (
     <SidebarMenu>
@@ -93,6 +98,16 @@ export function NavUser() {
               <DropdownMenuItem>
                 <Bell />
                 Notifications
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}
+              >
+                {theme === 'light' ? (
+                  <MoonStar className='h-[1.2rem] w-[1.2rem]' />
+                ) : (
+                  <Sun className='h-[1.2rem] w-[1.2rem]' />
+                )}
+                {theme === 'light' ? 'Dark' : 'Light'}
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />

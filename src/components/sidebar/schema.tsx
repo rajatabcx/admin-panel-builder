@@ -13,7 +13,6 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
-import { useEffect } from 'react';
 import { Tables } from './tables';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
@@ -28,18 +27,10 @@ export function Schema({
   const router = useRouter();
   const { schema } = useParams<{ schema: string; id: string }>();
 
-  useEffect(() => {
-    // if no schema is provided and defaultSchema is provided, redirect to the default schema
-    if (!schema && !!defaultSchema) {
-      router.push(`/dashboard/1/${defaultSchema}`);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [schema, defaultSchema]);
-
   return (
     <>
       <Select
-        value={schema}
+        value={schema || defaultSchema}
         onValueChange={(value) => {
           router.push(`/dashboard/1/${value}`);
         }}
@@ -78,7 +69,7 @@ export function Schema({
               <span>Tables</span>
             </SidebarMenuButton>
           </CollapsibleTrigger>
-          <Tables selectedSchema={schema} />
+          <Tables selectedSchema={schema || defaultSchema} />
         </SidebarMenuItem>
       </Collapsible>
     </>
