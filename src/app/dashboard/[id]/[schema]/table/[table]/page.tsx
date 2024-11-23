@@ -9,7 +9,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { SelectedHeaderOptions } from '@/components/database/SelectedHeaderOptions';
 import { useRows } from '@/hooks/dbOpertions.hooks';
 import { convertRowsToCsv, handleDownload } from '@/lib/utils';
-import { SortingColumn } from '@/lib/types';
+import { FilterColumn, SortingColumn } from '@/lib/types';
 
 export default function TablePage() {
   const { table, schema } = useParams<{
@@ -25,7 +25,7 @@ export default function TablePage() {
   const [view, setView] = useState<'table' | 'card'>('table');
   const [selected, setSelected] = useState<string[]>([]);
   const [sortingColumns, setSortingColumns] = useState<SortingColumn[]>([]);
-  const [filteredColumns] = useState<any[]>([]);
+  const [filteredColumns, setFilteredColumns] = useState<FilterColumn[]>([]);
 
   const { data, isLoading, isFetching } = useRows({
     schema,
@@ -33,6 +33,7 @@ export default function TablePage() {
     page: pagination.page,
     limit: pagination.limit,
     sortingColumns,
+    filteredColumns,
     enabled: !!schema && !!table,
   });
 
@@ -46,6 +47,10 @@ export default function TablePage() {
 
   const handleApplySorting = (data: SortingColumn[]) => {
     setSortingColumns(data);
+  };
+
+  const handleApplyFilter = (data: FilterColumn[]) => {
+    setFilteredColumns(data);
   };
 
   return (
@@ -64,6 +69,7 @@ export default function TablePage() {
           handleApplySorting={handleApplySorting}
           filteredColumns={filteredColumns.length}
           sortingColumns={sortingColumns.length}
+          handleApplyFilter={handleApplyFilter}
         />
       )}
       {/*main table  */}

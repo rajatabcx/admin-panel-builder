@@ -16,11 +16,11 @@ export const filterOperators: {
   { symbol: '<', description: '< less than' },
   { symbol: '>=', description: '>= greater than or equal' },
   { symbol: '<=', description: '<= less than or equal' },
-  { symbol: '[~~]', description: '[~~] like operator' },
-  { symbol: '[~~*]', description: '[~~*] ilike operator' },
-  { symbol: '[in]', description: '[in] one of a list of values' },
+  { symbol: '~~', description: '[~~] like operator' },
+  { symbol: '~~*', description: '[~~*] ilike operator' },
+  { symbol: 'IN', description: '[in] one of a list of values' },
   {
-    symbol: '[is]',
+    symbol: 'IS',
     description: '[is] checking for (null, not null, true, false)',
   },
 ];

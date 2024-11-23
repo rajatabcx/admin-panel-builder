@@ -28,10 +28,10 @@ export type FilterOperatorSymbol =
   | '<'
   | '>='
   | '<='
-  | '[~~]'
-  | '[~~*]'
-  | '[in]'
-  | '[is]';
+  | '~~'
+  | '~~*'
+  | 'IN'
+  | 'IS';
 
 export type FilterColumn = {
   name: string;

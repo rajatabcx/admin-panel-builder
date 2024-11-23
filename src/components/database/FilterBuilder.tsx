@@ -21,9 +21,11 @@ import { filterOperators } from '@/lib/constants';
 export default function FilterBuilder({
   filteredColumns,
   columns,
+  handleApplyFilter,
 }: {
   filteredColumns: number;
   columns: string[];
+  handleApplyFilter: (data: FilterColumn[]) => void;
 }) {
   const [selectedColumn, setSelectedColumn] = useState<FilterColumn[]>([]);
   const [isOpen, setIsOpen] = useState(false);
@@ -138,7 +140,7 @@ export default function FilterBuilder({
         <Separator className='my-2' />
         <div className='flex items-center justify-between'>
           <Button
-            variant='outline'
+            variant='ghost'
             size='sm'
             onClick={() => {
               setSelectedColumn([
@@ -155,7 +157,7 @@ export default function FilterBuilder({
             variant='outline'
             size='sm'
             onClick={() => {
-              //   handleApplyFiltering(selectedColumn);
+              handleApplyFilter(selectedColumn);
               setIsOpen(false);
             }}
           >

@@ -7,7 +7,7 @@ import { Toggle } from '@/components/ui/toggle';
 import { cn } from '@/lib/utils';
 import SortBuilder from './SortBuilder';
 import { SidebarTrigger } from '@/components/ui/sidebar';
-import { SortingColumn } from '@/lib/types';
+import { FilterColumn, SortingColumn } from '@/lib/types';
 import FilterBuilder from './FilterBuilder';
 
 export function HeaderOptionsMenu({
@@ -17,6 +17,7 @@ export function HeaderOptionsMenu({
   handleApplySorting,
   filteredColumns,
   sortingColumns,
+  handleApplyFilter,
 }: {
   view: 'table' | 'card';
   setView: (view: 'table' | 'card') => void;
@@ -24,6 +25,7 @@ export function HeaderOptionsMenu({
   handleApplySorting: (data: SortingColumn[]) => void;
   filteredColumns: number;
   sortingColumns: number;
+  handleApplyFilter: (data: FilterColumn[]) => void;
 }) {
   return (
     <div className='flex items-center justify-between w-full px-4 py-3 border-b'>
@@ -58,7 +60,7 @@ export function HeaderOptionsMenu({
       <div className='flex items-center gap-2'>
         <FilterBuilder
           columns={columns}
-          // handleApplyFiltering={handleApplyFiltering}
+          handleApplyFilter={handleApplyFilter}
           filteredColumns={filteredColumns}
         />
         <SortBuilder

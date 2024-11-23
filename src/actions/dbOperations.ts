@@ -1,6 +1,6 @@
 'use server';
 
-import { ActionResponse, SortingColumn } from '@/lib/types';
+import { ActionResponse, FilterColumn, SortingColumn } from '@/lib/types';
 import { getDbUrl } from './metadata';
 import { ResponseType } from '@/lib/constants';
 import { Client } from 'pg';
@@ -9,6 +9,7 @@ export async function rows({
   schema,
   table,
   sortingColumns = [],
+  filteredColumns = [],
   page = 1,
   pageSize = 10,
 }: {
@@ -17,6 +18,7 @@ export async function rows({
   page?: number;
   pageSize?: number;
   sortingColumns?: SortingColumn[];
+  filteredColumns?: FilterColumn[];
 }): Promise<
   ActionResponse & {
     data: any[];
@@ -72,6 +74,16 @@ export async function rows({
         SELECT *
         FROM ${schema}.${table}
         ${
+          filteredColumns.length
+            ? `WHERE ${filteredColumns
+                .map(
+                  (column, index) =>
+                    `${column.name} ${column.operator} $${index + 1}`
+                )
+                .join(' AND ')}`
+            : ''
+        }
+        ${
           sortingColumns.length
             ? `ORDER BY ${sortingColumns
                 .map((column) => `${column.name} ${column.type.toUpperCase()}`)
@@ -81,7 +93,13 @@ export async function rows({
         LIMIT ${pageSize}
         OFFSET ${offset};
       `;
-    const dataResult = await client.query(dataQuery);
+
+    const filterValues = filteredColumns.map((column) =>
+      column.operator === '~~*' || column.operator === '~~'
+        ? `%${column.value}%`
+        : column.value
+    );
+    const dataResult = await client.query(dataQuery, filterValues);
 
     return {
       data: dataResult.rows,
