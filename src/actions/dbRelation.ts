@@ -2,22 +2,8 @@
 
 import { Client } from 'pg';
 import { getDbUrl } from './metadata';
-import { ActionResponse } from '@/lib/types';
+import { ActionResponse, ColumnInfo } from '@/lib/types';
 import { ResponseType } from '@/lib/constants';
-
-interface ColumnInfo {
-  table_name: string;
-  column_name: string;
-  udt_name: string;
-  is_nullable: boolean;
-  is_primary_key: boolean;
-  is_unique: boolean;
-  is_foreign_key: boolean;
-  foreign_key_reference?: {
-    table: string;
-    column: string;
-  };
-}
 
 type Relation = {
   [key: string]: ColumnInfo[];
@@ -44,20 +30,26 @@ export async function relation(
       c.column_name,
       c.udt_name,
       c.is_nullable = 'YES' as is_nullable,
-      CASE 
+      bool_or(CASE 
         WHEN tc.constraint_type = 'PRIMARY KEY' THEN true
         ELSE false
-      END as is_primary_key,
-      CASE 
+      END) as is_primary_key,
+      bool_or(CASE 
         WHEN tc.constraint_type = 'UNIQUE' THEN true
         ELSE false
-      END as is_unique,
-      CASE 
+      END) as is_unique,
+      bool_or(CASE 
         WHEN tc.constraint_type = 'FOREIGN KEY' THEN true
         ELSE false
-      END as is_foreign_key,
-      ccu.table_name as referenced_table,
-      ccu.column_name as referenced_column
+      END) as is_foreign_key,
+      MAX(CASE 
+        WHEN tc.constraint_type = 'FOREIGN KEY' THEN ccu.table_name 
+        ELSE null
+      END) as referenced_table,
+      MAX(CASE 
+        WHEN tc.constraint_type = 'FOREIGN KEY' THEN ccu.column_name
+        ELSE null
+      END) as referenced_column
     FROM information_schema.columns c
     LEFT JOIN information_schema.key_column_usage kcu
       ON c.table_schema = kcu.table_schema 
@@ -69,10 +61,12 @@ export async function relation(
     LEFT JOIN information_schema.constraint_column_usage ccu
       ON tc.constraint_name = ccu.constraint_name
     WHERE c.table_schema = $1
+    GROUP BY c.table_schema, c.table_name, c.column_name, c.udt_name, c.is_nullable, c.ordinal_position
     ORDER BY c.table_name, c.ordinal_position;
   `;
 
     const result = await client.query(query, [schema]);
+
     return {
       type: ResponseType.SUCCESS,
       message: 'Relation fetched successfully',

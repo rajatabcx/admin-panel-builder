@@ -1,3 +1,4 @@
+import { Node } from '@xyflow/react';
 import { ResponseType } from './constants';
 
 export type ActionResponse = {
@@ -50,3 +51,30 @@ export type NLQAgentState = {
   aggregateQuery?: string;
   finalResult?: string;
 };
+
+export type ColumnInfo = {
+  tableName: string;
+  columnName: string;
+  columnType: string;
+  isNullable: boolean;
+  isPrimaryKey: boolean;
+  isUnique: boolean;
+} & (
+  | {
+      isForeignKey: true;
+      foreignKeyReference: {
+        table: string;
+        column: string;
+      };
+    }
+  | {
+      isForeignKey: false;
+    }
+);
+
+export type CustomNodeData = {
+  tableName: string;
+  columns: ColumnInfo[];
+};
+
+export type CustomNode = Node<CustomNodeData>;

@@ -1,6 +1,9 @@
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import { format } from 'date-fns';
+import dagre from 'dagre';
+import { CustomNode } from '@/lib/types';
+import { Edge } from '@xyflow/react';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -82,3 +85,55 @@ export enum SortingType {
   ASC = 'ASC',
   DESC = 'DESC',
 }
+
+export const getLayoutedElements = (nodes: CustomNode[], edges: Edge[]) => {
+  const dagreGraph = new dagre.graphlib.Graph();
+  dagreGraph.setDefaultEdgeLabel(() => ({}));
+
+  dagreGraph.setGraph({
+    rankdir: 'LR',
+    nodesep: 200,
+    ranksep: 150,
+    marginx: 50,
+    marginy: 50,
+  });
+
+  // Add nodes to dagre with dynamic sizing
+  nodes.forEach((node) => {
+    // Calculate height based on number of columns (assuming columns are in node.data)
+    const columnCount = node.data?.columns?.length || 0;
+    const headerHeight = 40; // Height for table name
+    const rowHeight = 40; // Height per column row
+    const padding = 0; // Padding for the container
+
+    const width = 250; // Keep width fixed or adjust if needed
+    const height = headerHeight + columnCount * rowHeight + padding * 2;
+
+    dagreGraph.setNode(node.id, { width, height });
+  });
+
+  // Add edges to dagre
+  edges.forEach((edge) => {
+    dagreGraph.setEdge(edge.source, edge.target);
+  });
+
+  // Calculate layout
+  dagre.layout(dagreGraph);
+
+  // Get new positions
+  const layoutedNodes = nodes.map((node) => {
+    const nodeWithPosition = dagreGraph.node(node.id);
+    const width = nodeWithPosition.width;
+    const height = nodeWithPosition.height;
+
+    return {
+      ...node,
+      position: {
+        x: nodeWithPosition.x - width / 2,
+        y: nodeWithPosition.y - height / 2,
+      },
+    };
+  });
+
+  return { nodes: layoutedNodes, edges };
+};
