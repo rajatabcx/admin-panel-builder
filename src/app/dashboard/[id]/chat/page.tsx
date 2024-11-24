@@ -74,7 +74,8 @@ export default function ChatPage() {
             className='flex items-center gap-2'
             variant='outline'
             type='submit'
-            disabled={isPending}
+            // disabled={isPending}
+            disabled
           >
             {isPending ? 'Sending' : 'Send'}
             {isPending ? <Loader className='size-4 animate-spin' /> : null}
