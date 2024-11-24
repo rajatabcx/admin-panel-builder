@@ -12,7 +12,7 @@ import {
   BackgroundVariant,
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
-import { Key, Fingerprint, Diamond } from 'lucide-react';
+import { Key, Fingerprint, Diamond, Loader } from 'lucide-react';
 
 import { useRelation } from '@/hooks/dbRelation.hooks';
 import { CustomTableNode } from '@/components/database/CustomTableNode';
@@ -21,7 +21,7 @@ import { getLayoutedElements } from '@/lib/utils';
 
 export default function DatabasePage() {
   const { schema } = useParams<{ schema: string }>();
-  const { data } = useRelation(schema, !!schema);
+  const { data, isLoading } = useRelation(schema, !!schema);
   const nodeTypes = useMemo(() => ({ customTable: CustomTableNode }), []);
 
   const tableNodes = useMemo(() => {
@@ -62,9 +62,10 @@ export default function DatabasePage() {
   const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>([]);
 
   useEffect(() => {
-    if (tableNodes.length && tableEdges.length) {
+    if (tableNodes.length) {
       const { nodes: layoutedNodes, edges: layoutedEdges } =
         getLayoutedElements(tableNodes, tableEdges);
+
       setNodes(layoutedNodes);
       setEdges(layoutedEdges);
     }
@@ -73,17 +74,24 @@ export default function DatabasePage() {
   return (
     <div className='h-full w-full flex flex-col'>
       <div className='flex-1'>
-        <ReactFlow
-          nodeTypes={nodeTypes}
-          onNodesChange={onNodesChange}
-          onEdgesChange={onEdgesChange}
-          nodes={nodes}
-          edges={edges}
-        >
-          <Controls />
-          <MiniMap />
-          <Background variant={BackgroundVariant.Dots} gap={12} size={1} />
-        </ReactFlow>
+        {isLoading ? (
+          <div className='h-full w-full flex justify-center items-center text-muted-foreground gap-2'>
+            <Loader className='size-5 animate-spin' />{' '}
+            <h1 className='text-sm'>Loading tables...</h1>
+          </div>
+        ) : (
+          <ReactFlow
+            nodeTypes={nodeTypes}
+            onNodesChange={onNodesChange}
+            onEdgesChange={onEdgesChange}
+            nodes={nodes}
+            edges={edges}
+          >
+            <Controls />
+            <MiniMap />
+            <Background variant={BackgroundVariant.Dots} gap={12} size={1} />
+          </ReactFlow>
+        )}
       </div>
       <div className='flex gap-6 justify-center bg-primary-foreground py-2'>
         <div className='flex items-center gap-2'>
