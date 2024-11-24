@@ -1,4 +1,4 @@
-import { Button } from '@/components/ui/button';
+import { buttonVariants } from '@/components/ui/button';
 import {
   Card,
   CardTitle,
@@ -6,9 +6,16 @@ import {
   CardDescription,
   CardFooter,
 } from '@/components/ui/card';
+import { cn } from '@/lib/utils';
+import Link from 'next/link';
 import React from 'react';
 
-export default function page() {
+export default async function page({
+  params,
+}: {
+  params: Promise<{ id: string; schema: string }>;
+}) {
+  const { id, schema } = await params;
   return (
     <div className='w-full h-screen overflow-hidden flex justify-center items-center'>
       <Card className='w-full max-w-md bg-secondary border border-muted-foreground rounded-lg'>
@@ -20,7 +27,12 @@ export default function page() {
           </CardDescription>
         </CardHeader>
         <CardFooter>
-          <Button>View Database</Button>
+          <Link
+            href={`/dashboard/${id}/${schema}/database`}
+            className={cn(buttonVariants({}))}
+          >
+            View Database
+          </Link>
         </CardFooter>
       </Card>
     </div>

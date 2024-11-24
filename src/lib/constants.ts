@@ -23,4 +23,20 @@ export const filterOperators: {
     symbol: 'IS',
     description: '[is] checking for (null, not null, true, false)',
   },
+  {
+    symbol: 'IS NOT',
+    description: '[is not] checking for (null, not null, true, false)',
+  },
+];
+
+export const isNotIsValuesDropdown = [
+  { label: 'Null', value: 'NULL' },
+  { label: 'True', value: 'TRUE' },
+  { label: 'False', value: 'FALSE' },
+  { label: 'Unknown', value: 'UNKNOWN' },
+  { label: 'Known', value: 'KNOWN' },
+  { label: 'Normal', value: 'NORMAL' },
+  { label: 'Infinite', value: 'INFINITE' },
+  { label: 'Finite', value: 'FINITE' },
+  { label: 'Document', value: 'DOCUMENT' },
 ];

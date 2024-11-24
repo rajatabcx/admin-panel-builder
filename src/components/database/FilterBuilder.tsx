@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Filter, Plus, X } from 'lucide-react';
+import { Filter, Plus, Undo2, X } from 'lucide-react';
 
 import {
   Popover,
@@ -14,9 +14,10 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
+  SelectValue,
 } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
-import { filterOperators } from '@/lib/constants';
+import { filterOperators, isNotIsValuesDropdown } from '@/lib/constants';
 
 export default function FilterBuilder({
   filteredColumns,
@@ -47,86 +48,139 @@ export default function FilterBuilder({
         className='w-[385px] border bg-primary-foreground'
       >
         {!!selectedColumn.length ? (
-          selectedColumn.map((column, index) => (
-            <div
-              className='flex items-center justify-between py-2 gap-2'
-              key={index}
-            >
-              <Select
-                value={column.name}
-                onValueChange={(value) => {
-                  setSelectedColumn(
-                    selectedColumn.map((c, idx) =>
-                      idx === index ? { ...c, name: value } : c
-                    )
-                  );
-                }}
+          <>
+            {selectedColumn.map((column, index) => (
+              <div
+                className='flex items-center justify-between py-2 gap-2'
+                key={index}
               >
-                <SelectTrigger className='w-[128px] text-xs py-0 px-2'>
-                  <span className='line-clamp-1 w-full text-left max-w-[80px]'>
-                    {column.name}
-                  </span>
-                </SelectTrigger>
-                <SelectContent>
-                  {columns.map((column) => (
-                    <SelectItem value={column} key={column}>
-                      {column}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <Select
-                value={column.operator}
-                onValueChange={(value) => {
-                  setSelectedColumn(
-                    selectedColumn.map((c, idx) =>
-                      idx === index
-                        ? {
-                            ...c,
-                            operator: value as FilterOperatorSymbol,
-                          }
-                        : c
-                    )
-                  );
-                }}
-              >
-                <SelectTrigger className='min-w-[52px] text-xs py-0 px-2'>
-                  <span>{column.operator}</span>
-                </SelectTrigger>
-                <SelectContent>
-                  {filterOperators.map((operator) => (
-                    <SelectItem value={operator.symbol} key={operator.symbol}>
-                      {operator.description}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <Input
-                className='w-[150px] text-xs py-0 px-2'
-                placeholder='value'
-                value={column.value}
-                onChange={(e) => {
-                  setSelectedColumn(
-                    selectedColumn.map((c, idx) =>
-                      idx === index ? { ...c, value: e.target.value } : c
-                    )
-                  );
-                }}
-              />
-              <Button
-                variant='ghost'
-                size='sm'
-                className='p-0 h-auto hover:bg-transparent'
-                onClick={() => {
-                  setSelectedColumn(
-                    selectedColumn.filter((_, i) => i !== index)
-                  );
-                }}
-              >
-                <X className='w-4 h-4' />
-              </Button>
-            </div>
-          ))
+                <Select
+                  value={column.name}
+                  onValueChange={(value) => {
+                    setSelectedColumn(
+                      selectedColumn.map((c, idx) =>
+                        idx === index ? { ...c, name: value } : c
+                      )
+                    );
+                  }}
+                >
+                  <SelectTrigger className='w-[128px] text-xs py-0 px-2'>
+                    <span className='line-clamp-1 w-full text-left max-w-[80px]'>
+                      {column.name}
+                    </span>
+                  </SelectTrigger>
+                  <SelectContent>
+                    {columns.map((column) => (
+                      <SelectItem value={column} key={column}>
+                        {column}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <Select
+                  value={column.operator}
+                  onValueChange={(value) => {
+                    setSelectedColumn(
+                      selectedColumn.map((c, idx) =>
+                        idx === index
+                          ? {
+                              ...c,
+                              operator: value as FilterOperatorSymbol,
+                              value:
+                                value === 'IS' || value === 'IS NOT'
+                                  ? 'NULL'
+                                  : c.value,
+                            }
+                          : c
+                      )
+                    );
+                  }}
+                >
+                  <SelectTrigger className='min-w-[52px] text-xs py-0 px-2'>
+                    <span>{column.operator}</span>
+                  </SelectTrigger>
+                  <SelectContent>
+                    {filterOperators.map((operator) => (
+                      <SelectItem value={operator.symbol} key={operator.symbol}>
+                        {operator.description}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                {column.operator === 'IS' || column.operator === 'IS NOT' ? (
+                  <Select
+                    value={column.value}
+                    onValueChange={(value) => {
+                      setSelectedColumn(
+                        selectedColumn.map((c, idx) =>
+                          idx === index
+                            ? {
+                                ...c,
+                                value: value,
+                              }
+                            : c
+                        )
+                      );
+                    }}
+                  >
+                    <SelectTrigger className='min-w-[52px] text-xs py-0 px-2'>
+                      <SelectValue placeholder='Select value' />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {isNotIsValuesDropdown.map((value) => (
+                        <SelectItem value={value.value} key={value.value}>
+                          {value.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                ) : (
+                  <Input
+                    required
+                    className='w-[150px] text-xs py-0 px-2'
+                    placeholder='value'
+                    value={column.value}
+                    onChange={(e) => {
+                      setSelectedColumn(
+                        selectedColumn.map((c, idx) =>
+                          idx === index ? { ...c, value: e.target.value } : c
+                        )
+                      );
+                    }}
+                  />
+                )}
+                <Button
+                  variant='ghost'
+                  size='sm'
+                  className='p-0 h-auto hover:bg-transparent'
+                  onClick={() => {
+                    setSelectedColumn(
+                      selectedColumn.filter((_, i) => i !== index)
+                    );
+                  }}
+                >
+                  <X className='w-4 h-4' />
+                </Button>
+              </div>
+            ))}
+            {!!filteredColumns ? (
+              <div className='flex items-center justify-end'>
+                <Button
+                  variant='outline'
+                  size='sm'
+                  className='bg-transparent'
+                  onClick={() => {
+                    setSelectedColumn([]);
+                    handleApplyFilter([]);
+                    setIsOpen(false);
+                  }}
+                >
+                  <Undo2 className='w-4 h-4' />
+                  Reset filter
+                </Button>
+              </div>
+            ) : null}
+          </>
         ) : (
           <>
             <h1 className='text-sm font-medium'>
@@ -157,7 +211,7 @@ export default function FilterBuilder({
             variant='outline'
             size='sm'
             onClick={() => {
-              handleApplyFilter(selectedColumn);
+              handleApplyFilter(selectedColumn.filter((c) => !!c.value));
               setIsOpen(false);
             }}
           >

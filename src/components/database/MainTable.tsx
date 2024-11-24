@@ -11,24 +11,33 @@ import {
 import { cn, formatCellValue } from '@/lib/utils';
 import { Checkbox } from '@/components/ui/checkbox';
 import ExpandedData from './ExpandedData';
+import { Card } from '@/components/ui/card';
 
 export function MainTable({
   data,
   headers,
   selected,
   setSelected,
+  errorMessage,
+  error,
 }: {
   data: any[];
   headers: { name: string; type: string }[];
   selected: string[];
   setSelected: (selected: string[]) => void;
+  errorMessage: string;
+  error: boolean;
 }) {
+  if (!headers.length) {
+    return <Card>{error ? errorMessage : 'No data found'}</Card>;
+  }
+
   return (
     <Table className='border-l'>
       <TableHeader>
         <TableRow>
           <TableHead className='border-l border-r'>
-            <div className='w-[65px]'>
+            <div>
               <Checkbox
                 checked={
                   selected.length
@@ -60,44 +69,54 @@ export function MainTable({
         </TableRow>
       </TableHeader>
       <TableBody>
-        {data.map((row, index) => (
-          <TableRow key={row.id}>
-            <TableCell
-              className={cn(
-                'group border-l border-r',
-                index === data.length - 1 ? 'border-b' : ''
-              )}
-            >
-              <div className='flex items-center gap-4 w-[65px]'>
-                <Checkbox
-                  className='border-muted-foreground'
-                  checked={selected.includes(row.id)}
-                  onCheckedChange={(checked) => {
-                    setSelected(
-                      checked
-                        ? [...selected, row.id]
-                        : selected.filter((id) => id !== row.id)
-                    );
-                  }}
-                />
-                <ExpandedData data={row} />
-              </div>
+        {!data.length ? (
+          <TableRow>
+            <TableCell colSpan={headers.length + 1}>
+              <p className='text-center text-base text-muted-foreground'>
+                {error ? errorMessage : 'No data found'}
+              </p>
             </TableCell>
-            {headers.map((header) => (
+          </TableRow>
+        ) : (
+          data.map((row, index) => (
+            <TableRow key={row.id}>
               <TableCell
-                key={header.name}
                 className={cn(
-                  'truncate border-r border-l',
+                  'group border-l border-r',
                   index === data.length - 1 ? 'border-b' : ''
                 )}
               >
-                <div className='w-[250px] truncate'>
-                  {formatCellValue(row[header.name], header.type)}
+                <div className='flex items-center gap-4 w-[65px]'>
+                  <Checkbox
+                    className='border-muted-foreground'
+                    checked={selected.includes(row.id)}
+                    onCheckedChange={(checked) => {
+                      setSelected(
+                        checked
+                          ? [...selected, row.id]
+                          : selected.filter((id) => id !== row.id)
+                      );
+                    }}
+                  />
+                  <ExpandedData data={row} />
                 </div>
               </TableCell>
-            ))}
-          </TableRow>
-        ))}
+              {headers.map((header) => (
+                <TableCell
+                  key={header.name}
+                  className={cn(
+                    'truncate border-r border-l',
+                    index === data.length - 1 ? 'border-b' : ''
+                  )}
+                >
+                  <div className='w-[250px] truncate'>
+                    {formatCellValue(row[header.name], header.type)}
+                  </div>
+                </TableCell>
+              ))}
+            </TableRow>
+          ))
+        )}
       </TableBody>
     </Table>
   );

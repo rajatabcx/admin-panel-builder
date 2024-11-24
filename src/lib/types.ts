@@ -31,7 +31,8 @@ export type FilterOperatorSymbol =
   | '~~'
   | '~~*'
   | 'IN'
-  | 'IS';
+  | 'IS'
+  | 'IS NOT';
 
 export type FilterColumn = {
   name: string;

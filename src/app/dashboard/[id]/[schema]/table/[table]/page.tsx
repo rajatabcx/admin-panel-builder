@@ -10,6 +10,7 @@ import { SelectedHeaderOptions } from '@/components/database/SelectedHeaderOptio
 import { useRows } from '@/hooks/dbOpertions.hooks';
 import { convertRowsToCsv, handleDownload } from '@/lib/utils';
 import { FilterColumn, SortingColumn } from '@/lib/types';
+import { ResponseType } from '@/lib/constants';
 
 export default function TablePage() {
   const { table, schema } = useParams<{
@@ -54,7 +55,7 @@ export default function TablePage() {
   };
 
   return (
-    <div className='w-full h-screen flex flex-col'>
+    <div className='w-full h-screen'>
       {/* header options menu */}
       {!!selected.length ? (
         <SelectedHeaderOptions
@@ -73,7 +74,7 @@ export default function TablePage() {
         />
       )}
       {/*main table  */}
-      <div className='flex-1 overflow-auto'>
+      <div className='h-[calc(100%-56.8px-52.8px)] overflow-auto'>
         {isLoading ? (
           <div className='px-4 py-2 space-y-2'>
             <Skeleton className='w-full h-6' />
@@ -88,6 +89,8 @@ export default function TablePage() {
             headers={data?.columns || []}
             selected={selected}
             setSelected={setSelected}
+            error={data?.type === ResponseType.ERROR}
+            errorMessage={data?.message || ''}
           />
         )}
       </div>

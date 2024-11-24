@@ -5,6 +5,34 @@ import { getDbUrl } from './metadata';
 import { ResponseType } from '@/lib/constants';
 import { Client } from 'pg';
 
+const getColumns = async (schema: string, table: string) => {
+  const dbUrl = await getDbUrl();
+  const client = new Client({ connectionString: dbUrl });
+
+  try {
+    await client.connect();
+    // Get column information
+    const columnQuery = `
+        SELECT column_name, udt_name
+        FROM information_schema.columns
+        WHERE table_schema = $1 
+        AND table_name = $2
+        ORDER BY ordinal_position;
+      `;
+    const columnResult = await client.query(columnQuery, [schema, table]);
+    const columns = columnResult.rows.map((row) => ({
+      name: row.column_name,
+      type: row.udt_name,
+    }));
+    return columns;
+  } catch (error) {
+    console.log(error);
+    return [];
+  } finally {
+    await client.end();
+  }
+};
+
 export async function rows({
   schema,
   table,
@@ -40,22 +68,10 @@ export async function rows({
 
   const client = new Client({ connectionString: dbUrl });
 
+  const columns = await getColumns(schema, table);
+
   try {
     await client.connect();
-
-    // Get column information
-    const columnQuery = `
-        SELECT column_name, udt_name
-        FROM information_schema.columns
-        WHERE table_schema = $1 
-        AND table_name = $2
-        ORDER BY ordinal_position;
-      `;
-    const columnResult = await client.query(columnQuery, [schema, table]);
-    const columns = columnResult.rows.map((row) => ({
-      name: row.column_name,
-      type: row.udt_name,
-    }));
 
     // Calculate offset
     const offset = (page - 1) * pageSize;
@@ -78,7 +94,11 @@ export async function rows({
             ? `WHERE ${filteredColumns
                 .map(
                   (column, index) =>
-                    `${column.name} ${column.operator} $${index + 1}`
+                    `${column.name} ${column.operator} ${
+                      column.operator === 'IS' || column.operator === 'IS NOT'
+                        ? `${column.value}`
+                        : `$${index + 1}`
+                    }`
                 )
                 .join(' AND ')}`
             : ''
@@ -94,11 +114,16 @@ export async function rows({
         OFFSET ${offset};
       `;
 
-    const filterValues = filteredColumns.map((column) =>
-      column.operator === '~~*' || column.operator === '~~'
-        ? `%${column.value}%`
-        : column.value
-    );
+    const filterValues = filteredColumns
+      .filter(
+        (column) => column.operator !== 'IS' && column.operator !== 'IS NOT'
+      )
+      .map((column) =>
+        column.operator === '~~*' || column.operator === '~~'
+          ? `%${column.value}%`
+          : column.value
+      );
+
     const dataResult = await client.query(dataQuery, filterValues);
 
     return {
@@ -110,13 +135,14 @@ export async function rows({
       message: 'Table data fetched successfully',
     };
   } catch (error: any) {
+    console.log(error);
     return {
       type: ResponseType.ERROR,
       message: error.message,
       data: [],
       total: 0,
       pageCount: 0,
-      columns: [],
+      columns,
     };
   } finally {
     await client.end();

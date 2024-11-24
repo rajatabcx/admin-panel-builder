@@ -28,7 +28,7 @@ export function HeaderOptionsMenu({
   handleApplyFilter: (data: FilterColumn[]) => void;
 }) {
   return (
-    <div className='flex items-center justify-between w-full px-4 py-3 border-b'>
+    <div className='flex items-center justify-between w-full px-4 py-3 border-b bg-background'>
       <div className='flex items-center gap-2'>
         <SidebarTrigger className='block md:hidden' />
 
