@@ -55,7 +55,7 @@ export function Schema({
       </Select>
       <SidebarMenuItem>
         <SidebarMenuButton tooltip='Database' asChild>
-          <Link href={`/dashboard/1/${schema}/database`}>
+          <Link href={`/dashboard/1/${schema || defaultSchema}/database`}>
             <Database className='size-5' />
             <span>Database</span>
           </Link>
