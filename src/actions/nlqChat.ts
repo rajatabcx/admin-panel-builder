@@ -61,3 +61,11 @@ async function* doNlq(
   };
   */
 }
+
+function analyzeIntent() {}
+function cataloging() {}
+function relevantTables() {}
+function generateQueries() {}
+function executeQueries() {}
+function refineQueries() {}
+function executeRefinedQueries() {}

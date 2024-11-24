@@ -1,3 +1,5 @@
+'use server';
+
 import { Client } from 'pg';
 import { getDbUrl } from './metadata';
 import { ActionResponse } from '@/lib/types';

@@ -39,3 +39,14 @@ export type FilterColumn = {
   operator: FilterOperatorSymbol;
   value: string;
 };
+
+export type NLQAgentState = {
+  query: string;
+  intent?: string;
+  relevantCatalog?: string[];
+  relevantTables?: string[];
+  queries?: string[];
+  intermediateResults?: string[];
+  aggregateQuery?: string;
+  finalResult?: string;
+};

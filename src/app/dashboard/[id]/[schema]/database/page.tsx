@@ -1,13 +1,12 @@
-import { relation } from '@/actions/dbRelation';
+'use client';
 import React from 'react';
 
-export default async function DatabasePage({
-  params,
-}: {
-  params: Promise<{ id: string; schema: string }>;
-}) {
-  const { schema } = await params;
-  const data = await relation(schema);
+import { useRelation } from '@/hooks/dbRelation.hooks';
+import { useParams } from 'next/navigation';
+
+export default function DatabasePage() {
+  const { schema } = useParams<{ schema: string }>();
+  const { data } = useRelation(schema, !!schema);
   return (
     <pre className='text-xs text-muted-foreground'>
       {JSON.stringify(data, null, 2)}
