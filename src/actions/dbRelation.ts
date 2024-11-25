@@ -49,7 +49,16 @@ export async function relation(
       MAX(CASE 
         WHEN tc.constraint_type = 'FOREIGN KEY' THEN ccu.column_name
         ELSE null
-      END) as referenced_column
+      END) as referenced_column,
+      bool_or(CASE 
+        WHEN tc.constraint_type = 'FOREIGN KEY' AND EXISTS (
+          SELECT 1 FROM information_schema.table_constraints tc2
+          WHERE tc2.table_name = ccu.table_name
+          AND tc2.constraint_type = 'UNIQUE'
+          AND tc2.constraint_name = tc.constraint_name
+        ) THEN true
+        ELSE false
+      END) as has_unique_constraint
     FROM information_schema.columns c
     LEFT JOIN information_schema.key_column_usage kcu
       ON c.table_schema = kcu.table_schema 
@@ -83,6 +92,10 @@ export async function relation(
               foreignKeyReference: {
                 table: curr.referenced_table,
                 column: curr.referenced_column,
+                relationType: determineRelationType(
+                  curr.has_unique_constraint,
+                  curr.is_unique
+                ),
               },
             }),
           });
@@ -99,6 +112,10 @@ export async function relation(
                 foreignKeyReference: {
                   table: curr.referenced_table,
                   column: curr.referenced_column,
+                  relationType: determineRelationType(
+                    curr.has_unique_constraint,
+                    curr.is_unique
+                  ),
                 },
               }),
             },
@@ -115,5 +132,18 @@ export async function relation(
     };
   } finally {
     await client.end();
+  }
+}
+
+function determineRelationType(
+  hasUniqueConstraint: boolean,
+  isUnique: boolean
+): string {
+  if (hasUniqueConstraint && isUnique) {
+    return 'ONE_TO_ONE';
+  } else if (isUnique) {
+    return 'ONE_TO_ONE';
+  } else {
+    return 'ONE_TO_MANY';
   }
 }

@@ -137,3 +137,17 @@ export const getLayoutedElements = (nodes: CustomNode[], edges: Edge[]) => {
 
   return { nodes: layoutedNodes, edges };
 };
+
+export const getEdgeLabel = (
+  relationshipType: string
+): { data: { startLabel: string; endLabel: string } } => {
+  if (relationshipType === 'ONE_TO_ONE')
+    return { data: { startLabel: '1', endLabel: '1' } };
+  else if (relationshipType === 'ONE_TO_MANY')
+    return { data: { startLabel: 'N', endLabel: '1' } };
+  else if (relationshipType === 'MANY_TO_ONE')
+    return { data: { startLabel: '1', endLabel: 'N' } };
+  else if (relationshipType === 'MANY_TO_MANY')
+    return { data: { startLabel: 'N', endLabel: 'M' } };
+  return { data: { startLabel: '', endLabel: '' } };
+};

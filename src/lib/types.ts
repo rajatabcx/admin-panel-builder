@@ -65,6 +65,7 @@ export type ColumnInfo = {
       foreignKeyReference: {
         table: string;
         column: string;
+        relationType: string;
       };
     }
   | {

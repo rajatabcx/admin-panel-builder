@@ -10,19 +10,27 @@ import {
   useEdgesState,
   Edge,
   BackgroundVariant,
+  MarkerType,
+  EdgeTypes,
+  NodeTypes,
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import { Key, Fingerprint, Diamond, Loader } from 'lucide-react';
 
 import { useRelation } from '@/hooks/dbRelation.hooks';
 import { CustomTableNode } from '@/components/database/CustomTableNode';
+import { CustomEdge } from '@/components/database/CustomTableEdge';
 import { CustomNode } from '@/lib/types';
-import { getLayoutedElements } from '@/lib/utils';
+import { getEdgeLabel, getLayoutedElements } from '@/lib/utils';
+
+const edgeTypes: EdgeTypes = {
+  custom: CustomEdge,
+};
+const nodeTypes: NodeTypes = { customTable: CustomTableNode };
 
 export default function DatabasePage() {
   const { schema } = useParams<{ schema: string }>();
   const { data, isLoading } = useRelation(schema, !!schema);
-  const nodeTypes = useMemo(() => ({ customTable: CustomTableNode }), []);
 
   const { nodes: tableNodes, edges: tableEdges } = useMemo(() => {
     const nodes: CustomNode[] = Object.keys(data?.data || {}).map(
@@ -48,8 +56,9 @@ export default function DatabasePage() {
             target: column.foreignKeyReference?.table,
             sourceHandle: `${table}_${column.columnName}`,
             targetHandle: `${column.foreignKeyReference?.table}_${column.foreignKeyReference?.column}`,
-            type: 'smoothstep',
+            type: 'custom',
             animated: true,
+            ...getEdgeLabel(column.foreignKeyReference?.relationType),
           });
         }
       }
@@ -82,10 +91,13 @@ export default function DatabasePage() {
         ) : (
           <ReactFlow
             nodeTypes={nodeTypes}
+            edgeTypes={edgeTypes}
             onNodesChange={onNodesChange}
             onEdgesChange={onEdgesChange}
             nodes={nodes}
             edges={edges}
+            fitView
+            defaultViewport={{ x: 0, y: 0, zoom: 1 }}
           >
             <Controls />
             <MiniMap />
@@ -94,19 +106,19 @@ export default function DatabasePage() {
         )}
       </div>
       <div className='flex gap-6 justify-center bg-primary-foreground py-2'>
-        <div className='flex items-center gap-2'>
+        <div className='flex items-center gap-2 text-sm'>
           <Key className='size-4 text-muted-foreground' />
           Primary Key
         </div>
-        <div className='flex items-center gap-2'>
+        <div className='flex items-center gap-2 text-sm'>
           <Fingerprint className='size-4 text-muted-foreground' />
           Unique
         </div>
-        <div className='flex items-center gap-2'>
+        <div className='flex items-center gap-2 text-sm'>
           <Diamond className='size-4 text-muted-foreground' />
           Nullable
         </div>
-        <div className='flex items-center gap-2'>
+        <div className='flex items-center gap-2 text-sm'>
           <Diamond className='size-4 text-muted-foreground fill-white stroke-white' />
           Not Nullable
         </div>
