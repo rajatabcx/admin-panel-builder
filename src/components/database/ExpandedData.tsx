@@ -8,7 +8,15 @@ import {
 } from '@/components/ui/sheet';
 import { Maximize2 } from 'lucide-react';
 
-export default function ExpandedData({ data }: { data: any }) {
+export default function ExpandedData({
+  data,
+  updating,
+  tableName,
+}: {
+  data: any;
+  tableName: string;
+  updating?: boolean;
+}) {
   return (
     <Sheet>
       <SheetTrigger>
@@ -16,7 +24,11 @@ export default function ExpandedData({ data }: { data: any }) {
       </SheetTrigger>
       <SheetContent className='w-full sm:max-w-2xl'>
         <SheetHeader>
-          <SheetTitle className='text-left'>Expanded Data</SheetTitle>
+          <SheetTitle className='text-left'>
+            {updating
+              ? `Updating rows from ${tableName} table`
+              : 'Inserting row into table'}
+          </SheetTitle>
           <SheetDescription>Some description will go here</SheetDescription>
           <pre className='text-sm text-muted-foreground whitespace-break-spaces text-left'>
             {JSON.stringify(data, null, 2)}

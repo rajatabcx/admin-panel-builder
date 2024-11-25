@@ -20,6 +20,7 @@ export function MainTable({
   setSelected,
   errorMessage,
   error,
+  tableName,
 }: {
   data: any[];
   headers: { name: string; type: string }[];
@@ -27,6 +28,7 @@ export function MainTable({
   setSelected: (selected: string[]) => void;
   errorMessage: string;
   error: boolean;
+  tableName: string;
 }) {
   if (!headers.length) {
     return <Card>{error ? errorMessage : 'No data found'}</Card>;
@@ -37,7 +39,7 @@ export function MainTable({
       <TableHeader>
         <TableRow>
           <TableHead className='border-l border-r'>
-            <div>
+            <div className='w-[65px]'>
               <Checkbox
                 checked={
                   selected.length
@@ -98,7 +100,7 @@ export function MainTable({
                       );
                     }}
                   />
-                  <ExpandedData data={row} />
+                  <ExpandedData data={row} tableName={tableName} updating />
                 </div>
               </TableCell>
               {headers.map((header) => (

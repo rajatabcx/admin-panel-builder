@@ -91,6 +91,7 @@ export default function TablePage() {
             setSelected={setSelected}
             error={data?.type === ResponseType.ERROR}
             errorMessage={data?.message || ''}
+            tableName={table}
           />
         )}
       </div>
