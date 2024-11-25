@@ -11,12 +11,12 @@ import { Settings, Sparkles } from 'lucide-react';
 const navMainData = [
   {
     name: 'Ask AI',
-    url: '/dashboard/1/chat',
+    url: '/dashboard/demo/chat',
     icon: Sparkles,
   },
   {
     name: 'Settings',
-    url: '#',
+    url: '/dashboard/demo/settings',
     icon: Settings,
   },
 ];

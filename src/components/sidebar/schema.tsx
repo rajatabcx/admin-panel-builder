@@ -45,7 +45,11 @@ export function Schema({
               <p className='text-sm p-1'>No schemas found</p>
             ) : (
               schemas.map((schema) => (
-                <SelectItem value={schema} key={schema}>
+                <SelectItem
+                  value={schema}
+                  key={schema}
+                  className='cursor-pointer'
+                >
                   {schema}
                 </SelectItem>
               ))

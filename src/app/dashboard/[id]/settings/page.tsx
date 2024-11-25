@@ -1,23 +1,19 @@
-import ShineBorder from '@/components/magic-ui/shine-border';
-import { buttonVariants } from '@/components/ui/button';
+import React from 'react';
+import { ChevronRight } from 'lucide-react';
+import Link from 'next/link';
+
 import {
   Card,
-  CardTitle,
   CardHeader,
+  CardTitle,
   CardDescription,
   CardFooter,
 } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
-import { ChevronRight } from 'lucide-react';
-import Link from 'next/link';
-import React from 'react';
+import { buttonVariants } from '@/components/ui/button';
+import ShineBorder from '@/components/magic-ui/shine-border';
 
-export default async function page({
-  params,
-}: {
-  params: Promise<{ id: string; schema: string }>;
-}) {
-  const { id, schema } = await params;
+export default function SettingsPage() {
   return (
     <div className='w-full h-screen overflow-hidden flex justify-center items-center'>
       <ShineBorder
@@ -36,10 +32,10 @@ export default async function page({
           </CardHeader>
           <CardFooter>
             <Link
-              href={`/dashboard/${id}/${schema}/database`}
+              href={`/dashboard/demo/chat`}
               className={cn(buttonVariants({}), 'group')}
             >
-              View Database
+              Chat With AI
               <ChevronRight className='size-4 group-hover:translate-x-1 transition-transform' />
             </Link>
           </CardFooter>

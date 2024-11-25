@@ -20,7 +20,7 @@ export async function AppSidebar({ id }: { id: string }) {
       </SidebarHeader>
       <SidebarContent>
         <NavMain />
-        <NavViews id={id} />
+        {/* <NavViews id={id} /> */}
         <NavDB />
       </SidebarContent>
       <SidebarFooter>
