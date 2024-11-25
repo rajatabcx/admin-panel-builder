@@ -42,6 +42,7 @@ body {
     --sidebar-border: 220 13% 91%;
     --sidebar-ring: 217.2 91.2% 59.8%;
   }
+
   .dark {
     --background: 240 10% 3.9%;
     --foreground: 0 0% 98%;
@@ -82,7 +83,17 @@ body {
   * {
     @apply border-border;
   }
+
   body {
     @apply bg-background text-foreground;
   }
+}
+
+.react-flow__edge.react-flow__edge-custom.selectable:hover .react-flow__edge-path,
+.react-flow__edge.react-flow__edge-custom.selected:focus .react-flow__edge-path {
+  stroke: hsl(var(--primary));
+}
+
+.react-flow__edge.react-flow__edge-custom.selectable .react-flow__edge-path {
+  stroke: hsl(var(--muted-foreground));
 }
