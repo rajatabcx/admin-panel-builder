@@ -7,6 +7,7 @@ import {
   CardFooter,
 } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
+import { ChevronRight } from 'lucide-react';
 import Link from 'next/link';
 import React from 'react';
 
@@ -18,10 +19,10 @@ export default async function page({
   const { id, schema } = await params;
   return (
     <div className='w-full h-screen overflow-hidden flex justify-center items-center'>
-      <Card className='w-full max-w-md bg-secondary border border-muted-foreground rounded-lg'>
+      <Card className='rounded-lg w-full max-w-xl bg-card/60 backdrop-blur-sm'>
         <CardHeader>
-          <CardTitle>Schema</CardTitle>
-          <CardDescription>
+          <CardTitle className='text-2xl font-semibold mb-5'>Schema</CardTitle>
+          <CardDescription className='text-muted-foreground'>
             Select database or a table from the navigation panel on the left to
             view its data, or create a new one.
           </CardDescription>
@@ -29,9 +30,10 @@ export default async function page({
         <CardFooter>
           <Link
             href={`/dashboard/${id}/${schema}/database`}
-            className={cn(buttonVariants({}))}
+            className={cn(buttonVariants({}), 'group')}
           >
             View Database
+            <ChevronRight className='size-4 group-hover:translate-x-1 transition-transform' />
           </Link>
         </CardFooter>
       </Card>
