@@ -22,7 +22,9 @@ export function Tables({ selectedSchema }: { selectedSchema: string }) {
         {isLoading ? (
           Array(5)
             .fill(0)
-            .map((_, index) => <SidebarMenuSkeleton key={index} />)
+            .map((_, index) => (
+              <SidebarMenuSkeleton key={index} index={index} showIcon />
+            ))
         ) : !tables?.length ? (
           <SidebarMenuSubItem className='text-sm text-muted-foreground'>
             No tables found

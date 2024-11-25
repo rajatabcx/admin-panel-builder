@@ -24,19 +24,19 @@ export default function DatabasePage() {
   const { data, isLoading } = useRelation(schema, !!schema);
   const nodeTypes = useMemo(() => ({ customTable: CustomTableNode }), []);
 
-  const tableNodes = useMemo(() => {
-    return Object.keys(data?.data || {}).map((tableName) => ({
-      id: tableName,
-      type: 'customTable',
-      position: { x: 0, y: 0 }, // Initial position will be recalculated
-      data: {
-        tableName,
-        columns: data?.data[tableName] || [],
-      },
-    }));
-  }, [data]);
+  const { nodes: tableNodes, edges: tableEdges } = useMemo(() => {
+    const nodes: CustomNode[] = Object.keys(data?.data || {}).map(
+      (tableName) => ({
+        id: tableName,
+        type: 'customTable',
+        position: { x: 0, y: 0 }, // Initial position will be recalculated
+        data: {
+          tableName,
+          columns: data?.data[tableName] || [],
+        },
+      })
+    );
 
-  const tableEdges = useMemo(() => {
     const edges: Edge[] = [];
     for (const table of Object.keys(data?.data || {})) {
       const columns = data?.data[table] || [];
@@ -55,7 +55,7 @@ export default function DatabasePage() {
       }
     }
 
-    return edges;
+    return { nodes, edges };
   }, [data]);
 
   const [nodes, setNodes, onNodesChange] = useNodesState<CustomNode>([]);

@@ -648,12 +648,15 @@ const SidebarMenuSkeleton = React.forwardRef<
   HTMLDivElement,
   React.ComponentProps<'div'> & {
     showIcon?: boolean;
+    index?: number;
   }
->(({ className, showIcon = false, ...props }, ref) => {
+>(({ className, showIcon = false, index = 0, ...props }, ref) => {
   // Random width between 50 to 90%.
   const width = React.useMemo(() => {
-    return `${Math.floor(Math.random() * 40) + 50}%`;
-  }, []);
+    // Use index to generate a number between 50 and 90
+    const baseWidth = 50 + ((index * 17) % 41);
+    return `${baseWidth}%`;
+  }, [index]);
 
   return (
     <div

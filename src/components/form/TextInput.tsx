@@ -64,7 +64,7 @@ export function TextInput<T extends FieldValues>({
                 >
                   <Info className='w-4 h-4' />
                 </TooltipTrigger>
-                <TooltipContent className='max-w-xs'>
+                <TooltipContent asChild side='bottom' className='max-w-xs'>
                   <p>{info}</p>
                 </TooltipContent>
               </Tooltip>
