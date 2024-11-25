@@ -1,6 +1,7 @@
-'use client';
-import React, { useEffect, useMemo } from 'react';
-import { useParams } from 'next/navigation';
+"use client";
+import React, { useEffect, useMemo } from "react";
+import { useParams } from "next/navigation";
+import { useTheme } from "next-themes";
 import {
   ReactFlow,
   MiniMap,
@@ -13,15 +14,16 @@ import {
   MarkerType,
   EdgeTypes,
   NodeTypes,
-} from '@xyflow/react';
-import '@xyflow/react/dist/style.css';
-import { Key, Fingerprint, Diamond, Loader } from 'lucide-react';
+} from "@xyflow/react";
+import "@xyflow/react/dist/style.css";
+import { Key, Fingerprint, Diamond, Loader } from "lucide-react";
 
-import { useRelation } from '@/hooks/dbRelation.hooks';
-import { CustomTableNode } from '@/components/database/CustomTableNode';
-import { CustomEdge } from '@/components/database/CustomTableEdge';
-import { CustomNode } from '@/lib/types';
-import { getEdgeLabel, getLayoutedElements } from '@/lib/utils';
+import { useRelation } from "@/hooks/dbRelation.hooks";
+import { CustomTableNode } from "@/components/database/CustomTableNode";
+import { CustomEdge } from "@/components/database/CustomTableEdge";
+import { CustomNode } from "@/lib/types";
+import { getEdgeLabel, getLayoutedElements } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 
 const edgeTypes: EdgeTypes = {
   custom: CustomEdge,
@@ -29,6 +31,7 @@ const edgeTypes: EdgeTypes = {
 const nodeTypes: NodeTypes = { customTable: CustomTableNode };
 
 export default function DatabasePage() {
+  const { theme } = useTheme();
   const { schema } = useParams<{ schema: string }>();
   const { data, isLoading } = useRelation(schema, !!schema);
 
@@ -36,7 +39,7 @@ export default function DatabasePage() {
     const nodes: CustomNode[] = Object.keys(data?.data || {}).map(
       (tableName) => ({
         id: tableName,
-        type: 'customTable',
+        type: "customTable",
         position: { x: 0, y: 0 }, // Initial position will be recalculated
         data: {
           tableName,
@@ -56,7 +59,7 @@ export default function DatabasePage() {
             target: column.foreignKeyReference?.table,
             sourceHandle: `${table}_${column.columnName}`,
             targetHandle: `${column.foreignKeyReference?.table}_${column.foreignKeyReference?.column}`,
-            type: 'custom',
+            type: "custom",
             animated: true,
             ...getEdgeLabel(column.foreignKeyReference?.relationType),
           });
@@ -70,7 +73,7 @@ export default function DatabasePage() {
   const [nodes, setNodes, onNodesChange] = useNodesState<CustomNode>([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>([]);
 
-  useEffect(() => {
+  const handleAutoLayout = () => {
     if (tableNodes.length) {
       const { nodes: layoutedNodes, edges: layoutedEdges } =
         getLayoutedElements(tableNodes, tableEdges);
@@ -78,18 +81,23 @@ export default function DatabasePage() {
       setNodes(layoutedNodes);
       setEdges(layoutedEdges);
     }
+  };
+
+  useEffect(() => {
+    handleAutoLayout();
   }, [tableNodes, tableEdges, setNodes, setEdges]);
 
   return (
-    <div className='h-full w-full flex flex-col'>
-      <div className='flex-1'>
+    <div className="h-full w-full flex flex-col">
+      <div className="flex-1">
         {isLoading ? (
-          <div className='h-full w-full flex justify-center items-center text-muted-foreground gap-2'>
-            <Loader className='size-5 animate-spin' />{' '}
-            <h1 className='text-sm'>Loading tables...</h1>
+          <div className="h-full w-full flex justify-center items-center text-muted-foreground gap-2">
+            <Loader className="size-5 animate-spin" />{" "}
+            <h1 className="text-sm">Loading tables...</h1>
           </div>
         ) : (
           <ReactFlow
+            colorMode={theme as "dark" | "light"}
             nodeTypes={nodeTypes}
             edgeTypes={edgeTypes}
             onNodesChange={onNodesChange}
@@ -100,28 +108,33 @@ export default function DatabasePage() {
             defaultViewport={{ x: 0, y: 0, zoom: 1 }}
           >
             <Controls />
-            <MiniMap />
+            <MiniMap pannable zoomable />
             <Background variant={BackgroundVariant.Dots} gap={12} size={1} />
           </ReactFlow>
         )}
       </div>
-      <div className='flex gap-6 justify-center bg-primary-foreground py-2'>
-        <div className='flex items-center gap-2 text-sm'>
-          <Key className='size-4 text-muted-foreground' />
-          Primary Key
+      <div className="flex justify-between items-center bg-primary-foreground py-2 px-3 border border-">
+        <div className="flex gap-6 justify-between items-center">
+          <div className="flex items-center gap-2 text-xs">
+            <Key className="size-4 text-muted-foreground" />
+            Primary Key
+          </div>
+          <div className="flex items-center gap-2 text-xs">
+            <Fingerprint className="size-4 text-muted-foreground" />
+            Unique
+          </div>
+          <div className="flex items-center gap-2 text-xs">
+            <Diamond className="size-4 text-muted-foreground" />
+            Nullable
+          </div>
+          <div className="flex items-center gap-2 text-xs">
+            <Diamond className="size-4 text-muted-foreground fill-current stroke-current" />
+            Not Nullable
+          </div>
         </div>
-        <div className='flex items-center gap-2 text-sm'>
-          <Fingerprint className='size-4 text-muted-foreground' />
-          Unique
-        </div>
-        <div className='flex items-center gap-2 text-sm'>
-          <Diamond className='size-4 text-muted-foreground' />
-          Nullable
-        </div>
-        <div className='flex items-center gap-2 text-sm'>
-          <Diamond className='size-4 text-muted-foreground fill-white stroke-white' />
-          Not Nullable
-        </div>
+        <Button size="sm" onClick={handleAutoLayout}>
+          Auto Layout
+        </Button>
       </div>
     </div>
   );
