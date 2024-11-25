@@ -1,6 +1,7 @@
 'use client';
 import React, { useEffect, useMemo } from 'react';
 import { useParams } from 'next/navigation';
+import { useTheme } from 'next-themes';
 import {
   ReactFlow,
   MiniMap,
@@ -22,6 +23,7 @@ import { CustomTableNode } from '@/components/database/CustomTableNode';
 import { CustomEdge } from '@/components/database/CustomTableEdge';
 import { CustomNode } from '@/lib/types';
 import { getEdgeLabel, getLayoutedElements } from '@/lib/utils';
+import { Button } from '@/components/ui/button';
 
 const edgeTypes: EdgeTypes = {
   custom: CustomEdge,
@@ -29,6 +31,7 @@ const edgeTypes: EdgeTypes = {
 const nodeTypes: NodeTypes = { customTable: CustomTableNode };
 
 export default function DatabasePage() {
+  const { theme } = useTheme();
   const { schema } = useParams<{ schema: string }>();
   const { data, isLoading } = useRelation(schema, !!schema);
 
@@ -70,6 +73,16 @@ export default function DatabasePage() {
   const [nodes, setNodes, onNodesChange] = useNodesState<CustomNode>([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>([]);
 
+  const handleAutoLayout = () => {
+    const { nodes: layoutedNodes, edges: layoutedEdges } = getLayoutedElements(
+      tableNodes,
+      tableEdges
+    );
+
+    setNodes(layoutedNodes);
+    setEdges(layoutedEdges);
+  };
+
   useEffect(() => {
     if (tableNodes.length) {
       const { nodes: layoutedNodes, edges: layoutedEdges } =
@@ -90,6 +103,7 @@ export default function DatabasePage() {
           </div>
         ) : (
           <ReactFlow
+            colorMode={theme as 'dark' | 'light'}
             nodeTypes={nodeTypes}
             edgeTypes={edgeTypes}
             onNodesChange={onNodesChange}
@@ -100,28 +114,37 @@ export default function DatabasePage() {
             defaultViewport={{ x: 0, y: 0, zoom: 1 }}
           >
             <Controls />
-            <MiniMap />
+            <MiniMap pannable zoomable />
             <Background variant={BackgroundVariant.Dots} gap={12} size={1} />
           </ReactFlow>
         )}
       </div>
-      <div className='flex gap-6 justify-center bg-primary-foreground py-2'>
-        <div className='flex items-center gap-2 text-sm'>
-          <Key className='size-4 text-muted-foreground' />
-          Primary Key
+      <div className='flex justify-between items-center bg-primary-foreground py-2 px-3 border border-'>
+        <div className='flex gap-6 justify-between items-center'>
+          <div className='flex items-center gap-2 text-xs'>
+            <Key className='size-4 text-muted-foreground' />
+            Primary Key
+          </div>
+          <div className='flex items-center gap-2 text-xs'>
+            <Fingerprint className='size-4 text-muted-foreground' />
+            Unique
+          </div>
+          <div className='flex items-center gap-2 text-xs'>
+            <Diamond className='size-4 text-muted-foreground' />
+            Nullable
+          </div>
+          <div className='flex items-center gap-2 text-xs'>
+            <Diamond className='size-4 text-muted-foreground fill-current stroke-current' />
+            Not Nullable
+          </div>
         </div>
-        <div className='flex items-center gap-2 text-sm'>
-          <Fingerprint className='size-4 text-muted-foreground' />
-          Unique
-        </div>
-        <div className='flex items-center gap-2 text-sm'>
-          <Diamond className='size-4 text-muted-foreground' />
-          Nullable
-        </div>
-        <div className='flex items-center gap-2 text-sm'>
-          <Diamond className='size-4 text-muted-foreground fill-white stroke-white' />
-          Not Nullable
-        </div>
+        <Button
+          size='sm'
+          onClick={handleAutoLayout}
+          disabled={!nodes.length || isLoading}
+        >
+          Auto Layout {isLoading && <Loader className='size-4 animate-spin' />}
+        </Button>
       </div>
     </div>
   );
