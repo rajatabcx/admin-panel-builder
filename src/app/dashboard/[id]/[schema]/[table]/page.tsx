@@ -11,6 +11,7 @@ import { useRows } from '@/hooks/dbOpertions.hooks';
 import { convertRowsToCsv, handleDownload } from '@/lib/utils';
 import { FilterColumn, SortingColumn } from '@/lib/types';
 import { ResponseType } from '@/lib/constants';
+import { toast } from 'sonner';
 
 export default function TablePage() {
   const { table, schema } = useParams<{
@@ -44,6 +45,9 @@ export default function TablePage() {
       data?.data.filter((row) => selected.includes(row.id)) || []
     );
     handleDownload(csv, `${table}_rows.csv`);
+    toast.success(
+      `Successfully exported ${selected.length} rows from ${table} table`
+    );
   };
 
   const handleApplySorting = (data: SortingColumn[]) => {
@@ -104,6 +108,7 @@ export default function TablePage() {
         total={data?.total || 0}
         pageCount={data?.pageCount || 0}
         isLoading={isLoading || isFetching}
+        setSelected={setSelected}
       />
     </div>
   );

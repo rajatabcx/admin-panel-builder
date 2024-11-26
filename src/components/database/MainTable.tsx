@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Dispatch, SetStateAction } from 'react';
 
 import {
   Table,
@@ -25,7 +25,7 @@ export function MainTable({
   data: any[];
   headers: { name: string; type: string }[];
   selected: string[];
-  setSelected: (selected: string[]) => void;
+  setSelected: Dispatch<SetStateAction<string[]>>;
   errorMessage: string;
   error: boolean;
   tableName: string;

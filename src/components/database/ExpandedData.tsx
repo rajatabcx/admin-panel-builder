@@ -22,7 +22,7 @@ export default function ExpandedData({
       <SheetTrigger>
         <Maximize2 className='cursor-pointer hover:text-primary transition-all text-muted-foreground size-4 opacity-0 group-hover:opacity-100' />
       </SheetTrigger>
-      <SheetContent className='w-full sm:max-w-2xl'>
+      <SheetContent className='w-full sm:max-w-2xl overflow-auto'>
         <SheetHeader>
           <SheetTitle className='text-left'>
             {updating
@@ -30,9 +30,11 @@ export default function ExpandedData({
               : 'Inserting row into table'}
           </SheetTitle>
           <SheetDescription>Some description will go here</SheetDescription>
-          <pre className='text-sm text-muted-foreground whitespace-break-spaces text-left'>
-            {JSON.stringify(data, null, 2)}
-          </pre>
+          <div className='overflow-auto h-full'>
+            <pre className='text-sm text-muted-foreground whitespace-break-spaces text-left'>
+              {JSON.stringify(data, null, 2)}
+            </pre>
+          </div>
         </SheetHeader>
       </SheetContent>
     </Sheet>

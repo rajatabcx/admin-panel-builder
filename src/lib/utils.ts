@@ -39,7 +39,15 @@ export const convertRowsToCsv = (headers: string[], rows: any[]) => {
 
   const csvHeaders = headers.join(','); // Extract column headers
   const csvRows = rows
-    .map((row) => Object.values(row).join(',')) // Convert each row to CSV format
+    .map((row) =>
+      Object.values(row)
+        .map((item) =>
+          typeof item === 'object' && item !== null
+            ? JSON.stringify(item).replace(/,/g, ' - ')
+            : item
+        )
+        .join(',')
+    ) // Convert each row to CSV format
     .join('\n');
 
   return `${csvHeaders}\n${csvRows}`;

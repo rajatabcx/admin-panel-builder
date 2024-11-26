@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { ArrowLeft, ArrowRight, RefreshCcw } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
@@ -18,12 +18,14 @@ export function FooterOptionsMenu({
   total,
   pageCount,
   isLoading,
+  setSelected,
 }: {
   pagination: { page: number; limit: number };
   setPagination: (pagination: { page: number; limit: number }) => void;
   total: number;
   pageCount: number;
   isLoading: boolean;
+  setSelected: Dispatch<SetStateAction<string[]>>;
 }) {
   const [paginationState, setPaginationState] = useState({
     total,
@@ -64,6 +66,7 @@ export function FooterOptionsMenu({
           size='icon'
           disabled={pagination.page === 1 || isLoading}
           onClick={() => {
+            setSelected([]);
             setPagination({ ...pagination, page: pagination.page - 1 });
           }}
         >
@@ -82,6 +85,7 @@ export function FooterOptionsMenu({
             isLoading
           }
           onClick={() => {
+            setSelected([]);
             setPagination({ ...pagination, page: pagination.page + 1 });
           }}
         >
@@ -97,6 +101,7 @@ export function FooterOptionsMenu({
             <DropdownMenuRadioGroup
               value={pagination.limit.toString()}
               onValueChange={(value) => {
+                setSelected([]);
                 setPagination({ page: 1, limit: Number(value) });
               }}
             >
@@ -104,6 +109,7 @@ export function FooterOptionsMenu({
               <DropdownMenuRadioItem value='100'>100</DropdownMenuRadioItem>
               <DropdownMenuRadioItem value='250'>250</DropdownMenuRadioItem>
               <DropdownMenuRadioItem value='500'>500</DropdownMenuRadioItem>
+              <DropdownMenuRadioItem value='1000'>1000</DropdownMenuRadioItem>
             </DropdownMenuRadioGroup>
           </DropdownMenuContent>
         </DropdownMenu>

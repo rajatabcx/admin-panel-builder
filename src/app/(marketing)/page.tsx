@@ -16,7 +16,9 @@ export default function page() {
     <div className='flex flex-col gap-4'>
       <h1>Marketing</h1>
       <Link href='/dashboard/demo'>Dashboard</Link>
-      <Button onClick={handleClick}>Debug</Button>
+      <Button onClick={handleClick} className='w-fit'>
+        Debug
+      </Button>
       {/* <Button onClick={handleMainData}>Main Data</Button> */}
     </div>
   );
