@@ -1,8 +1,10 @@
 'use server';
 
+import { ResponseType } from '@/lib/constants';
+import { ActionResponse } from '@/lib/types';
 import pg from 'pg';
 
-export const debug = async () => {
+export const testConnection = async (): Promise<ActionResponse> => {
   const client = new pg.Client({
     connectionString: process.env.DATABASE_URL,
     ssl: {
@@ -12,14 +14,16 @@ export const debug = async () => {
   try {
     // Attempt to connect to the database
     await client.connect();
-    return 'Connected to the database successfully!';
-
-    // Optionally, you can run a simple query to ensure everything is working
-    // const res = await client.query('SELECT NOW()');
-    // return res.rows[0];
+    return {
+      type: ResponseType.SUCCESS,
+      message: 'Connected to the database successfully!',
+    };
   } catch (error: any) {
     console.error(error.stack);
-    return [];
+    return {
+      type: ResponseType.ERROR,
+      message: 'Failed to connect to the database',
+    };
   } finally {
     await client.end();
   }

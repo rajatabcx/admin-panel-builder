@@ -2,24 +2,22 @@
 import React from 'react';
 import Link from 'next/link';
 
-import { debug, mainData } from '@/actions/debug';
+import { testConnection } from '@/actions/debug';
 import { Button } from '@/components/ui/button';
+import { handleResponse } from '@/lib/handleResponse';
 
 export default function page() {
   const handleClick = async () => {
-    const res = await debug();
-    console.log(res);
+    const res = await testConnection();
+    handleResponse(res);
   };
-  const handleMainData = async () => {
-    const res = await mainData();
-    console.log(res);
-  };
+
   return (
     <div className='flex flex-col gap-4'>
       <h1>Marketing</h1>
       <Link href='/dashboard/demo'>Dashboard</Link>
       <Button onClick={handleClick}>Debug</Button>
-      <Button onClick={handleMainData}>Main Data</Button>
+      {/* <Button onClick={handleMainData}>Main Data</Button> */}
     </div>
   );
 }
