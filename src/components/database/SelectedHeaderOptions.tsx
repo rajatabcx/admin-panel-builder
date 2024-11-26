@@ -6,22 +6,26 @@ import { SidebarTrigger } from '@/components/ui/sidebar';
 export function SelectedHeaderOptions({
   selected,
   handleExportCsv,
+  editable,
 }: {
   selected: string[];
   handleExportCsv: () => void;
+  editable: boolean;
 }) {
   return (
     <div className='flex items-center gap-2 px-4 py-3 w-full border-b bg-background'>
       <SidebarTrigger className='block md:hidden' />
 
-      <Button
-        variant='destructive'
-        className='flex items-center gap-2'
-        size='sm'
-        disabled
-      >
-        <Trash2 className='w-4 h-4' /> Delete {selected.length} rows
-      </Button>
+      {editable ? (
+        <Button
+          variant='destructive'
+          className='flex items-center gap-2'
+          size='sm'
+          disabled
+        >
+          <Trash2 className='w-4 h-4' /> Delete {selected.length} rows
+        </Button>
+      ) : null}
       <Button
         size='sm'
         className='flex items-center gap-2'

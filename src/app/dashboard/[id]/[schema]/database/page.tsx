@@ -11,7 +11,6 @@ import {
   useEdgesState,
   Edge,
   BackgroundVariant,
-  MarkerType,
   EdgeTypes,
   NodeTypes,
 } from '@xyflow/react';

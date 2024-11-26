@@ -7,7 +7,7 @@ import {
   SidebarMenuSubItem,
 } from '@/components/ui/sidebar';
 import { CollapsibleContent } from '@/components/ui/collapsible';
-import { Table2 } from 'lucide-react';
+import { Eye, Table2, TableColumnsSplit } from 'lucide-react';
 import Link from 'next/link';
 
 export function Tables({ selectedSchema }: { selectedSchema: string }) {
@@ -31,14 +31,21 @@ export function Tables({ selectedSchema }: { selectedSchema: string }) {
           </SidebarMenuSubItem>
         ) : (
           tables.map((table) => (
-            <SidebarMenuSubItem key={table}>
+            <SidebarMenuSubItem key={table.name}>
               <SidebarMenuSubButton asChild>
                 <Link
-                  href={`/dashboard/1/${selectedSchema}/table/${table}`}
+                  href={`/dashboard/1/${selectedSchema}/${table.name}`}
                   className='flex items-center gap-2'
                 >
-                  <Table2 className='w-4 h-4' />
-                  <span>{table}</span>
+                  {table.type === 'partitioned_table' ? (
+                    <TableColumnsSplit className='w-4 h-4 text-muted-foreground' />
+                  ) : table.type === 'view' ? (
+                    <Eye className='w-4 h-4 text-muted-foreground' />
+                  ) : (
+                    <Table2 className='w-4 h-4 text-muted-foreground' />
+                  )}
+
+                  <span>{table.name}</span>
                 </Link>
               </SidebarMenuSubButton>
             </SidebarMenuSubItem>

@@ -20,7 +20,12 @@ export async function relation(
       data: {},
     };
   }
-  const client = new Client({ connectionString: dbUrl });
+  const client = new Client({
+    connectionString: dbUrl,
+    ssl: {
+      rejectUnauthorized: false,
+    },
+  });
 
   try {
     await client.connect();

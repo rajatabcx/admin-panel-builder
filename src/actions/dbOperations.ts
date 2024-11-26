@@ -5,9 +5,20 @@ import { getDbUrl } from './metadata';
 import { ResponseType } from '@/lib/constants';
 import { Client } from 'pg';
 
+const extractUsername = async (connectionString: string): Promise<string> => {
+  const regex = /postgresql:\/\/([^:]+):/;
+  const match = connectionString.match(regex);
+  return match ? match[1] : '';
+};
+
 const getColumns = async (schema: string, table: string) => {
   const dbUrl = await getDbUrl();
-  const client = new Client({ connectionString: dbUrl });
+  const client = new Client({
+    connectionString: dbUrl,
+    ssl: {
+      rejectUnauthorized: false,
+    },
+  });
 
   try {
     await client.connect();
@@ -19,15 +30,40 @@ const getColumns = async (schema: string, table: string) => {
         AND table_name = $2
         ORDER BY ordinal_position;
       `;
+    const ownerQuery = `
+      SELECT DISTINCT
+        c.relname AS table_name,
+        n.nspname AS schema_name,
+        pg_get_userbyid(c.relowner) AS table_owner
+      FROM pg_class c
+      JOIN pg_namespace n ON c.relnamespace = n.oid
+      WHERE c.relkind = 'r'  
+        AND n.nspname = $1   
+        AND c.relname = $2   
+      LIMIT 1;
+      `;
     const columnResult = await client.query(columnQuery, [schema, table]);
+    const ownerResult = await client.query(ownerQuery, [schema, table]);
+
+    const username = await extractUsername(dbUrl);
+
     const columns = columnResult.rows.map((row) => ({
       name: row.column_name,
       type: row.udt_name,
     }));
-    return columns;
+    console.log(ownerResult.rows[0]?.table_owner, username);
+    return {
+      columns,
+      editable:
+        ownerResult.rows[0]?.table_owner === username ||
+        username.split('.')[0] === ownerResult.rows[0]?.table_owner, //supabase
+    };
   } catch (error) {
     console.log(error);
-    return [];
+    return {
+      columns: [],
+      editable: false,
+    };
   } finally {
     await client.end();
   }
@@ -53,6 +89,7 @@ export async function rows({
     total: number;
     pageCount: number;
     columns: Array<{ name: string; type: string }>;
+    editable: boolean;
   }
 > {
   const dbUrl = await getDbUrl();
@@ -64,11 +101,17 @@ export async function rows({
       total: 0,
       pageCount: 0,
       columns: [],
+      editable: false,
     };
 
-  const client = new Client({ connectionString: dbUrl });
+  const client = new Client({
+    connectionString: dbUrl,
+    ssl: {
+      rejectUnauthorized: false,
+    },
+  });
 
-  const columns = await getColumns(schema, table);
+  const { columns, editable } = await getColumns(schema, table);
 
   try {
     await client.connect();
@@ -133,6 +176,7 @@ export async function rows({
       columns,
       type: ResponseType.SUCCESS,
       message: 'Table data fetched successfully',
+      editable,
     };
   } catch (error: any) {
     console.log(error);
@@ -143,6 +187,7 @@ export async function rows({
       total: 0,
       pageCount: 0,
       columns,
+      editable: false,
     };
   } finally {
     await client.end();

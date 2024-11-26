@@ -18,6 +18,7 @@ export function HeaderOptionsMenu({
   filteredColumns,
   sortingColumns,
   handleApplyFilter,
+  editable,
 }: {
   view: 'table' | 'card';
   setView: (view: 'table' | 'card') => void;
@@ -26,6 +27,7 @@ export function HeaderOptionsMenu({
   filteredColumns: number;
   sortingColumns: number;
   handleApplyFilter: (data: FilterColumn[]) => void;
+  editable: boolean;
 }) {
   return (
     <div className='flex items-center justify-between w-full px-4 py-3 border-b bg-background'>
@@ -68,10 +70,14 @@ export function HeaderOptionsMenu({
           handleApplySorting={handleApplySorting}
           sortingColumns={sortingColumns}
         />
-        <Separator orientation='vertical' className='h-4' />
-        <Button size='sm'>
-          <Plus className='w-4 h-4' /> Insert
-        </Button>
+        {editable ? (
+          <>
+            <Separator orientation='vertical' className='h-4' />
+            <Button size='sm'>
+              <Plus className='w-4 h-4' /> Insert
+            </Button>
+          </>
+        ) : null}
       </div>
     </div>
   );

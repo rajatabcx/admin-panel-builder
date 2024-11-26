@@ -61,6 +61,7 @@ export default function TablePage() {
         <SelectedHeaderOptions
           selected={selected}
           handleExportCsv={handleExportCsv}
+          editable={!!data?.editable}
         />
       ) : (
         <HeaderOptionsMenu
@@ -71,6 +72,7 @@ export default function TablePage() {
           filteredColumns={filteredColumns.length}
           sortingColumns={sortingColumns.length}
           handleApplyFilter={handleApplyFilter}
+          editable={!!data?.editable}
         />
       )}
       {/*main table  */}

@@ -20,20 +20,24 @@ export async function getSchemas(): Promise<
       schemas: [],
     };
 
-  const client = new Client({ connectionString: dbUrl });
+  const client = new Client({
+    connectionString: dbUrl,
+    ssl: {
+      rejectUnauthorized: false,
+    },
+  });
 
   try {
     await client.connect();
 
     // Fetch schemas, tables, and columns
     const schemaQuery = `
-    SELECT DISTINCT table_schema
-    FROM information_schema.columns
-    WHERE table_schema NOT IN ('pg_catalog', 'information_schema')
-    ORDER BY table_schema;
+SELECT nspname AS table_schema
+FROM pg_catalog.pg_namespace
+WHERE nspname NOT LIKE 'pg_toast%' AND nspname NOT LIKE 'pg_temp_%' AND nspname NOT IN ('pg_catalog', 'information_schema')
+ORDER BY nspname;
   `;
     const schemaResult = await client.query(schemaQuery);
-
     return {
       schemas: schemaResult.rows.map((row) => row.table_schema),
       type: ResponseType.SUCCESS,
@@ -52,7 +56,7 @@ export async function getSchemas(): Promise<
 
 export async function getTables(
   schema: string
-): Promise<ActionResponse & { tables: string[] }> {
+): Promise<ActionResponse & { tables: Array<{ name: string; type: string }> }> {
   const dbUrl = await getDbUrl();
 
   if (!schema || !dbUrl)
@@ -62,22 +66,39 @@ export async function getTables(
       tables: [],
     };
 
-  const client = new Client({ connectionString: dbUrl });
+  const client = new Client({
+    connectionString: dbUrl,
+    ssl: {
+      rejectUnauthorized: false,
+    },
+  });
 
   try {
     await client.connect();
 
-    // Fetch schemas, tables, and columns
-    const schemaQuery = `
-        SELECT DISTINCT table_name
-        FROM information_schema.columns
-        WHERE table_schema = '${schema}'
-        ORDER BY table_name;
+    const tableQuery = `
+        SELECT DISTINCT c.relname as table_name, 
+               CASE c.relkind
+                 WHEN 'r' THEN 'table'
+                 WHEN 'v' THEN 'view'
+                 WHEN 'm' THEN 'materialized_view'
+                 WHEN 'f' THEN 'foreign_table'
+                 WHEN 'p' THEN 'partitioned_table'
+                 ELSE c.relkind::text
+               END as table_type
+        FROM pg_class c
+        JOIN pg_namespace n ON n.oid = c.relnamespace
+        WHERE n.nspname = $1
+        AND c.relkind IN ('r','v','m','f','p')
+        ORDER BY c.relname;
       `;
-    const schemaResult = await client.query(schemaQuery);
+    const tableResult = await client.query(tableQuery, [schema]);
 
     return {
-      tables: schemaResult.rows.map((row) => row.table_name),
+      tables: tableResult.rows.map((row) => ({
+        name: row.table_name,
+        type: row.table_type,
+      })),
       type: ResponseType.SUCCESS,
       message: 'Tables fetched successfully',
     };
