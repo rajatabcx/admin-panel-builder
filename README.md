@@ -84,3 +84,7 @@ arr.map((row) => ({
           }),
         }))```
 ````
+
+<!-- generate sql query -->
+
+<!-- OR use full text search with the to_tsvector and to_tsquery functions, if possible. -->

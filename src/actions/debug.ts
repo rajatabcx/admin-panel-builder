@@ -38,17 +38,19 @@ export const mainData = async () => {
   });
   try {
     await client.connect();
+
+    // Query to get all schemas and their tables
     const query = `
-    SELECT DISTINCT
-      c.relname AS table_name,
-      n.nspname AS schema_name,
-      pg_get_userbyid(c.relowner) AS table_owner
-    FROM pg_class c
-    JOIN pg_namespace n ON c.relnamespace = n.oid
-    WHERE c.relkind = 'r'  -- Only regular tables
-    ORDER BY c.relname;
-    `;
+   SELECT user_profiles.name 
+FROM user_profiles 
+JOIN departments ON user_profiles.id = departments.hod_id 
+JOIN colleges ON departments.college_id = colleges.id 
+WHERE LOWER(colleges.slug) ILIKE LOWER('%bppimt%') 
+AND LOWER(departments.name) ILIKE LOWER('%electronics%')
+      `;
+
     const res = await client.query(query);
+
     return res.rows;
   } catch (error: any) {
     console.error(error.stack);

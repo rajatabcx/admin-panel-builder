@@ -1,51 +1,57 @@
 'use server';
 
-import { generateText } from 'ai';
+import { generateObject, generateText } from 'ai';
 import { openai } from '@ai-sdk/openai';
 
-import { NLQAgentState, NLQResponseEvent, NLQUpdateEvent } from '@/lib/types';
+import { Catalog, Column, NLQResponseEvent, NLQUpdateEvent } from '@/lib/types';
 import { NlqStatus } from '@/lib/constants';
+import { exampleCatalog } from '../../catalog';
+import { z } from 'zod';
+import { getDbUrl } from './metadata';
+import { Client } from 'pg';
 
-const analyzeIntentPrompt = `
-  You are a SQL and Technology Expert tasked with understanding user queries and generating informative responses.
-  Your role is to carefully analyze the user's input, which will be in natural language, to identify the underlying intent and provide a detailed response that addresses their needs.
-  Requirements for your response:
-    1. Intent Analysis: Accurately determine what the user is asking for or trying to achieve.
-    2. Comprehensive Explanation: Deliver a clear and thorough natural language explanation that elaborates on the user's query, including any necessary context or background information.
-    3. Insightful Guidance: If applicable, offer additional insights, best practices, or recommendations related to SQL or technology to enhance user understanding.
-    4. Clarity and Relevance: Ensure your response is easy to understand and directly relevant to the user's intent.
-`;
-
-const relevantCatalogsPrompt = `
-You are a highly experienced SQL Expert with over 10 years of expertise. You are provided with a catalog containing metadata about various databases, including descriptions, table names, and column names. Your task is to analyze user queries to understand their intent and determine whether the required data can be retrieved from a single database or if multiple databases are needed.
-        Response Requirements:
-        1. Intent Analysis: Carefully assess the user's query and cross-reference it with the catalog metadata to identify the database or databases involved.
-        2. Categorization:
-            If the data can be fetched from a single database, return True and include the name of the database.
-            If the data must be retrieved from multiple databases, return False.
-        3. Output Format:
-            For single-database queries: True, Database Name
-            For multi-database queries: False
-  Ensure that your analysis is thorough, leveraging your extensive experience to provide precise and contextually accurate responses.
-`;
-
-const relevantTablesPrompt = `
-You are a seasoned SQL Expert with over 10 years of experience.
+const relevantTablesPrompt = (catalog: Catalog) => `
+You are a seasoned POSTGRESQL Expert with over 10 years of experience.
         Your role is to analyze user queries and identify all the relevant tables in a database catalog that might be related or can provide the required data.
         The catalog contains metadata about databases, including descriptions, table names, and column names.
-        
+
+        Return the names of ALL the SQL tables that MIGHT be relevant to the user question.
+
+        ALWAYS try to keep the number of tables in the output to a minimum.
+        ALWAYS try to keep the query simple and avoid using complex joins, subqueries, CTEs, etc.
+        ALWAYS try to avoid using multiple schemas, if possible.
+        ONLY use multiple schemas if there are no other options.
+
+        <catalog>
+        ${JSON.stringify(catalog, null, 2)}
+        </catalog>
+
+        Remember to include ALL POTENTIALLY RELEVANT tables, even if you're not sure that they're needed.
 `;
 
-const queryGenerationPrompt = `
-You are a seasoned SQL Expert with over 10 years of experience with {provider} dialect.
-        Your task is to create SQL queries based on the given user intent, using metadata from a provided database catalog.
-        The catalog includes database descriptions, table names, column names, and other relevant metadata to guide your query generation.
+const queryGenerationPrompt = (
+  relevantRecords: {
+    schema: string;
+    table: string;
+    columns: Column[];
+  }[]
+) => `
+You are a seasoned SQL Expert with over 10 years of experience with POSTGRESQL dialect. Your job is to help the user write a SQL query to retrieve the data they need.
+        Your task is to create SQL queries based on the given user query.
+        You will be provided with relevantRecords which contains the schema, table and columns names and descriptions that are relevant to the user query.
+
+        ONLY SELECT queries are allowed. You can't generate any query that will modify database in any way. You can't use INSERT, UPDATE, DELETE, etc. You can only generate queries that will only read data from the database.
 
         The following types of queries are not allowed:
             - Queries with wildcard stars.
             - Queries that don't have a table name for a column.
-            - Queries that have subqueries that are in where clasues, joins, group by, order by, etc.
             - SQL Functions that are user defined. Inbuilt functions like SUM, AVG, COUNT, etc are allowed.
+
+        Only retrieval queries are allowed.
+        For things like string fields, use the ILIKE operator, as we are using case insensitive search don't use LOWER() function. For example: industry ILIKE '%search_term%'.
+
+        ALWAYS try to avoid filtering with "=", expect for primary keys and user defined types like enums, instead use LIKE operator or ILIKE operator with % prefix and suffix. THIS IS VERY IMPORTANT.
+        USERS ARE NOT VERY GOOD AT SQL, SO DON'T EXPECT TOO MUCH FROM THEM.
 
         \`\`\`sql
             <!-- Queries with wildcard stars are not allowed -->
@@ -57,26 +63,33 @@ You are a seasoned SQL Expert with over 10 years of experience with {provider} d
         select name from employees where salary > 1000 <!--This Query is not allowed -->
     \`\`\`
         Guidelines:
-        1. Leverage the Catalog: Use the metadata to align your queries with the correct database, tables, and columns.
-        2. Output: Create multiple simple queries to address the user intent comprehensively and efficiently.
+        1. Leverage the Relevant Records: Use the metadata to align your queries with the correct database, tables, and columns.
         3. Column Prefixing: Ensure that all columns are prefixed with the table name to avoid ambiguity.
         Ensure that your generated queries are precise, efficient, and easy to understand, showcasing your extensive experience.
-        
+
+        <relevantRecords>
+        ${JSON.stringify(relevantRecords, null, 2)}
+        </relevantRecords>
 `;
 
-const queryAggregatePrompt = `
-You are a SQL Expert with over 10 years of experience. Your task is to consolidate multiple provided queries into an optimal single SQL query or the minimum number of queries needed to achieve the desired result. You will be provided with a json containing queries and sample responses from them.
+const responseGenerationPrompt = (data: any[]) => `
+You are an AI assistant that analyzes SQL query results and generates natural language responses. 
 
-            Task Requirements:
-            1. Analyze Provided Queries: Carefully review the given individual queries to understand the data they retrieve and their intended outcomes.
-            2. Aggregate Query Construction: Combine and refactor the individual queries into one comprehensive SQL query that can deliver the same result set. You can convert these provided queries in CTEs (With clasuses), subqueries or joings to achieve this.
-            3. Ensure that the final query is optimized for performance and adheres to SQL best practices.
+- If the query result is an empty array or contains no meaningful data, explicitly state: "There is no data available."
+- If the query result is a non-empty array or contains valid data:
+  - Summarize the data clearly.
+  - Handle any null or missing values gracefully by excluding them from the response.
+  - Use proper grammar and formatting to make the response easy to understand.
 
-            Guidelines:
-            1. Efficiency and Performance: Design the aggregated query to minimize computation time and resource usage.
-            2. Simplicity and Clarity: Strive for clear and maintainable SQL code, even when aggregating complex logic.
-            3. Output Format: Return the complete aggregated query and, if necessary, include brief comments explaining non-standard operations or logic.
-    Ensure that the final result is accurate, optimized, and reflects your expertise in SQL.
+The data may contain various types, such as arrays of objects, single objects, strings, or numbers. Always rely on the provided data and do not fabricate information.
+
+Here is the query result:
+<QUERYRESULT>
+${JSON.stringify(data, null, 2)}
+</QUERYRESULT>
+
+Now, generate the appropriate response based on the above instructions.
+
 `;
 
 export async function nlqChat(query: string) {
@@ -98,52 +111,165 @@ async function* nlqSseWrapper(
 async function* doNlq(
   query: string
 ): AsyncGenerator<NLQUpdateEvent | NLQResponseEvent> {
-  const state: NLQAgentState = {
-    query,
-  };
   console.log(`Started processing query: ${query}`);
-  // Simulate processing steps
-  yield { kind: 'UPDATE', status: NlqStatus.ANALYZING_INTENT };
-  const intent = await analyzeIntent(query);
-  console.log('Intent:', intent);
-  state.intent = intent;
+  // have to figure out the intent of user, if its related to database and query then only pass it, also fix any typo that the query might have
+  yield { kind: 'UPDATE', status: NlqStatus.RELEVANT_TABLES };
+  const { relevantRecords: records } = await relevantRecords(query);
+
+  const relevantData = records
+    .map((record) => {
+      const schema = exampleCatalog.schemas.find(
+        (s) => s.name === record.schema
+      );
+      const data = record.tables.map((tableName) => {
+        const table = schema?.tables.find((t) => t.name === tableName);
+        return {
+          schema: record.schema,
+          table: tableName,
+          columns: table?.columns || [],
+        };
+      });
+      return data;
+    })
+    .flat();
+
   yield { kind: 'UPDATE', status: NlqStatus.GENERATING_QUERIES };
-  await new Promise((resolve) => setTimeout(resolve, 1500));
+  const generatedQuery = await generateQueries(query, relevantData);
 
   yield { kind: 'UPDATE', status: NlqStatus.EXECUTING_QUERIES };
-  await new Promise((resolve) => setTimeout(resolve, 1200));
+  const executionResult = await executeQueries(generatedQuery);
 
-  yield { kind: 'UPDATE', status: NlqStatus.REFINING_QUERY };
-  await new Promise((resolve) => setTimeout(resolve, 2000));
+  yield { kind: 'UPDATE', status: NlqStatus.GENERATING_RESPONSE };
+  const response = await generateResponse(query, executionResult);
 
-  yield { kind: 'UPDATE', status: NlqStatus.EXECUTE_REFINED_QUERY };
-  await new Promise((resolve) => setTimeout(resolve, 1000));
-
-  // Simulate a response
   yield {
     kind: 'RESPONSE',
     type: 'TEXT',
-    payload:
-      'This is a mock response. In a real implementation, this would contain actual query results.',
+    payload: response,
   };
 }
 
-async function analyzeIntent(query: string) {
+async function relevantRecords(
+  query: string
+): Promise<{ relevantRecords: { schema: string; tables: string[] }[] }> {
+  console.log(`Getting relevant records for query: ${query}`);
+  const modifiedCatalog: Catalog = {
+    schemas: exampleCatalog.schemas.map((schema) => ({
+      name: schema.name,
+      description: schema.description,
+      tables: schema.tables.map((table) => ({
+        name: table.name,
+        description: table.description,
+      })),
+    })),
+  };
+
   try {
-    const response = await generateText({
-      model: openai('gpt-3.5-turbo'),
-      system: analyzeIntentPrompt,
-      messages: [{ role: 'user', content: query }],
+    const response = await generateObject({
+      model: openai('gpt-4o-mini'),
+      system: relevantTablesPrompt(modifiedCatalog),
+      prompt: `Retrieve the names of all the tables that might be relevant to the user query: ${query}`,
+      schema: z.object({
+        relevantRecords: z.array(
+          z.object({
+            schema: z.string(),
+            tables: z.array(z.string()),
+          })
+        ),
+      }),
     });
-    return response.text;
+    return response.object;
   } catch (error) {
-    console.error('Error analyzing intent:', error);
+    console.log(`Error getting relevant records for query: ${query}`);
+    console.error('Error getting relevant records:', error);
+    return { relevantRecords: [] };
+  }
+}
+
+async function generateQueries(
+  query: string,
+  relevantRecords: { schema: string; table: string; columns: Column[] }[]
+): Promise<any> {
+  console.log(`Generating queries for query: ${query}`);
+  try {
+    const response = await generateObject({
+      model: openai('gpt-4o-mini'),
+      system: queryGenerationPrompt(relevantRecords),
+      prompt: `Generate the query necessary to retrieve the data the user wants: ${query}`,
+      schema: z.object({
+        query: z.string(),
+      }),
+    });
+    return response.object.query;
+  } catch (error) {
+    console.log(`Error generating queries for query: ${query}`);
+    console.error('Error generating queries:', error);
     return '';
   }
 }
-// function cataloging() {}
-// function relevantTables() {}
-// function generateQueries() {}
-// function executeQueries() {}
-// function refineQueries() {}
-// function executeRefinedQueries() {}
+
+async function executeQueries(sqlQuery: string) {
+  console.log(`Executing query: ${sqlQuery}`);
+  if (
+    !sqlQuery.trim().toLowerCase().startsWith('select') ||
+    sqlQuery.trim().toLowerCase().includes('drop') ||
+    sqlQuery.trim().toLowerCase().includes('delete') ||
+    sqlQuery.trim().toLowerCase().includes('insert') ||
+    sqlQuery.trim().toLowerCase().includes('update') ||
+    sqlQuery.trim().toLowerCase().includes('alter') ||
+    sqlQuery.trim().toLowerCase().includes('truncate') ||
+    sqlQuery.trim().toLowerCase().includes('create') ||
+    sqlQuery.trim().toLowerCase().includes('grant') ||
+    sqlQuery.trim().toLowerCase().includes('revoke')
+  ) {
+    return 'You are only allowed to execute SELECT queries.';
+  }
+
+  const dbUrl = await getDbUrl();
+  const client = new Client({
+    connectionString: dbUrl,
+    ssl: {
+      rejectUnauthorized: false,
+    },
+  });
+
+  try {
+    await client.connect();
+    const data = await client.query(sqlQuery);
+    return data.rows;
+  } catch (e: any) {
+    console.log(`Error executing query: ${sqlQuery}`);
+    console.error(e.message);
+    return 'An error occurred while executing the query.';
+  } finally {
+    await client.end();
+  }
+}
+
+async function generateResponse(
+  query: string,
+  data: any[] | string
+): Promise<string> {
+  console.log(`Generating response for query: ${query}`);
+  if (typeof data === 'string') {
+    return data;
+  }
+
+  try {
+    const response = await generateText({
+      model: openai('gpt-4o-mini'),
+      system: responseGenerationPrompt(data),
+      messages: [
+        {
+          role: 'user',
+          content: `Generate a response to the user query: ${query}`,
+        },
+      ],
+    });
+    return response.text;
+  } catch (error) {
+    console.log(`Error generating response for query: ${query}`);
+    console.error('Error generating response:', error);
+    return 'An error occurred while generating the response.';
+  }
+}

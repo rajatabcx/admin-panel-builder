@@ -6,13 +6,18 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from '@/components/ui/sidebar';
-import { Settings, Sparkles } from 'lucide-react';
+import { ScrollText, Settings, Sparkles } from 'lucide-react';
 
 const navMainData = [
   {
     name: 'Ask AI',
     url: '/dashboard/demo/chat',
     icon: Sparkles,
+  },
+  {
+    name: 'Manage Catalog',
+    url: '/dashboard/demo/catalog',
+    icon: ScrollText,
   },
   {
     name: 'Settings',

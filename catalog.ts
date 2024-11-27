@@ -1,0 +1,764 @@
+import { Catalog } from '@/lib/types';
+
+export const exampleCatalog: Catalog = {
+  schemas: [
+    {
+      name: 'auth',
+      description:
+        'Authentication and authorization management schema, contains user authentication and authorization information, this should be referred only when we need any kind of confirmation time or numbers, not for anything else, everything user related other than auth, like name , role etc is managed is user_profiles in public schema',
+      tables: [
+        {
+          name: 'users',
+          description:
+            'Core user authentication table storing credentials, authentication tokens, account status, and security information including passwords, email/phone verification, and SSO details',
+          columns: [
+            {
+              name: 'instance_id',
+              description: 'This is the id of the instance of the user',
+            },
+            {
+              name: 'id',
+              description: 'This is the id of the user',
+            },
+            {
+              name: 'aud',
+              description: 'This is the authentication id of the user',
+            },
+            {
+              name: 'role',
+              description: 'This is the role of the user',
+            },
+            {
+              name: 'email',
+              description: 'This is the email of the user',
+            },
+            {
+              name: 'encrypted_password',
+              description: 'This is the encrypted password of the user',
+            },
+            {
+              name: 'email_confirmed_at',
+              description:
+                'This is the date and time when the user confirmed their email',
+            },
+            {
+              name: 'invited_at',
+              description:
+                'This is the date and time when the user was invited',
+            },
+            {
+              name: 'confirmation_token',
+              description: 'This is the confirmation token of the user',
+            },
+            {
+              name: 'confirmation_sent_at',
+              description:
+                'This is the date and time when the user confirmation token was sent',
+            },
+            {
+              name: 'recovery_token',
+              description: 'This is the recovery token of the user',
+            },
+            {
+              name: 'recovery_sent_at',
+              description:
+                'This is the date and time when the user recovery token was sent',
+            },
+            {
+              name: 'email_change_token_new',
+              description: 'This is the new email change token of the user',
+            },
+            {
+              name: 'email_change',
+              description: 'This is the email change of the user',
+            },
+            {
+              name: 'email_change_sent_at',
+              description:
+                'This is the date and time when the user email change token was sent',
+            },
+            {
+              name: 'last_sign_in_at',
+              description:
+                'This is the date and time when the user last signed in',
+            },
+            {
+              name: 'raw_app_meta_data',
+              description: 'This is the raw app metadata of the user',
+            },
+            {
+              name: 'raw_user_meta_data',
+              description: 'This is the raw user metadata of the user',
+            },
+            {
+              name: 'is_super_admin',
+              description: 'This is whether the user is a super admin',
+            },
+            {
+              name: 'created_at',
+              description:
+                'This is the date and time when the user was created',
+            },
+            {
+              name: 'updated_at',
+              description:
+                'This is the date and time when the user was last updated',
+            },
+            {
+              name: 'phone',
+              description: 'This is the phone number of the user',
+            },
+            {
+              name: 'phone_confirmed_at',
+              description:
+                'This is the date and time when the user confirmed their phone number',
+            },
+            {
+              name: 'phone_change',
+              description: 'This is the phone change of the user',
+            },
+            {
+              name: 'phone_change_token',
+              description: 'This is the phone change token of the user',
+            },
+            {
+              name: 'phone_change_sent_at',
+              description:
+                'This is the date and time when the user phone change token was sent',
+            },
+            {
+              name: 'confirmed_at',
+              description:
+                'This is the date and time when the user confirmed their account',
+            },
+            {
+              name: 'email_change_token_current',
+              description: 'This is the current email change token of the user',
+            },
+            {
+              name: 'email_change_confirm_status',
+              description:
+                'This is the email change confirm status of the user',
+            },
+            {
+              name: 'banned_until',
+              description: 'This is the date and time when the user was banned',
+            },
+            {
+              name: 'reauthentication_token',
+              description: 'This is the reauthentication token of the user',
+            },
+            {
+              name: 'reauthentication_sent_at',
+              description:
+                'This is the date and time when the user reauthentication token was sent',
+            },
+            {
+              name: 'is_sso_user',
+              description: 'This is whether the user is a sso user',
+            },
+            {
+              name: 'deleted_at',
+              description:
+                'This is the date and time when the user was deleted',
+            },
+            {
+              name: 'is_anonymous',
+              description: 'This is whether the user is an anonymous user',
+            },
+          ],
+        },
+      ],
+    },
+    {
+      name: 'public',
+      description: 'Main application schema for educational management system',
+      tables: [
+        {
+          name: 'colleges',
+          description:
+            'Educational institutions with their basic details, contact information, branding assets, and content management',
+          columns: [
+            {
+              name: 'id',
+              description: 'This is the id of the college',
+            },
+            {
+              name: 'name',
+              description: 'This is the name of the college',
+            },
+            {
+              name: 'description',
+              description:
+                'This is the description of the college, some things that people should know about before taking admission',
+            },
+            {
+              name: 'website',
+              description: 'This is the website url of the college',
+            },
+            {
+              name: 'email',
+              description: 'This is the email of the college',
+            },
+            {
+              name: 'logo',
+              description: 'This is the logo url of the college',
+            },
+            {
+              name: 'address',
+              description:
+                'This is the address of the college, taken from google maps',
+            },
+            {
+              name: 'landing_content',
+              description:
+                'This is the landing content of the college, this is the content that is shown on the landing page of the college, this is html/markdown content',
+            },
+            {
+              name: 'is_live',
+              description:
+                'This is whether the college is live and should be shown to the users',
+            },
+            {
+              name: 'created_at',
+              description:
+                'This is the date and time when the college was created',
+            },
+            {
+              name: 'updated_at',
+              description:
+                'This is the date and time when the college was last updated',
+            },
+            {
+              name: 'slug',
+              description:
+                'This is the slug of the college, this is used to generate the url of the college, an unique identifier for the college',
+            },
+          ],
+        },
+        {
+          name: 'departments',
+          description:
+            'Academic departments within colleges, containing department details, HOD reference, and unique department codes',
+          columns: [
+            {
+              name: 'id',
+              description: 'This is the id of the department',
+            },
+            {
+              name: 'logo',
+              description: 'This is the logo url of the department',
+            },
+            {
+              name: 'name',
+              description: 'This is the name of the department',
+            },
+            {
+              name: 'college_id',
+              description:
+                'This is the id of the college that the department belongs to, foreign key to the colleges table',
+            },
+            {
+              name: 'description',
+              description:
+                'This is the description of the department, some things that people should know about before taking admission',
+            },
+            {
+              name: 'landing_content',
+              description:
+                'This is the landing content of the department, this is the content that is shown on the landing page of the department, this is html/markdown content',
+            },
+            {
+              name: 'created_at',
+              description:
+                'This is the date and time when the department was created',
+            },
+            {
+              name: 'updated_at',
+              description:
+                'This is the date and time when the department was last updated',
+            },
+            {
+              name: 'hod_id',
+              description:
+                'This is the id of the head of the department, foreign key to the user_profiles table',
+            },
+            {
+              name: 'department_code',
+              description:
+                'This is the code of the department, this is a unique identifier for the department within a college, this is not uniquer throughout the whole database',
+            },
+          ],
+        },
+        {
+          name: 'courses',
+          description:
+            'Course offerings linked to subjects, including course type (theory/practical), content, and metadata',
+          columns: [
+            {
+              name: 'id',
+              description: 'This is the id of the course',
+            },
+            {
+              name: 'name',
+              description: 'This is the name of the course',
+            },
+            {
+              name: 'subject_id',
+              description:
+                'This is the id of the subject that the course belongs to, foreign key to the subjects table',
+            },
+            {
+              name: 'created_at',
+              description:
+                'This is the date and time when the course was created',
+            },
+            {
+              name: 'updated_at',
+              description:
+                'This is the date and time when the course was last updated',
+            },
+            {
+              name: 'type',
+              description:
+                'This is the type of the course, this is an enum with values: "theory", "practical"',
+            },
+            {
+              name: 'description',
+              description:
+                'This is the description of the course, synopsis and what will be taught in the course',
+            },
+            {
+              name: 'image',
+              description: 'This is the image url of the course',
+            },
+          ],
+        },
+        {
+          name: 'subjects',
+          description:
+            'Academic subjects linked to departments, containing credit information and unique paper codes',
+          columns: [
+            {
+              name: 'id',
+              description: 'This is the id of the subject',
+            },
+            {
+              name: 'name',
+              description: 'This is the name of the subject',
+            },
+            {
+              name: 'department_id',
+              description:
+                'This is the id of the department that the subject belongs to, foreign key to the departments table',
+            },
+            {
+              name: 'credits',
+              description:
+                'This is the number of credits that the subject is worth',
+            },
+            {
+              name: 'description',
+              description:
+                'This is the description of the subject, some things that will be taught in the subject',
+            },
+            {
+              name: 'created_at',
+              description:
+                'This is the date and time when the subject was created',
+            },
+            {
+              name: 'updated_at',
+              description:
+                'This is the date and time when the subject was last updated',
+            },
+            {
+              name: 'paper_code',
+              description:
+                'This is the paper code of the subject, this is a unique identifier for the subject within a department, this is not uniquer throughout the whole database',
+            },
+          ],
+        },
+        {
+          name: 'topics',
+          description:
+            'Individual topics within courses, organizing course content into discrete learning units',
+          columns: [
+            {
+              name: 'id',
+              description: 'This is the id of the topic',
+            },
+            {
+              name: 'name',
+              description: 'This is the name of the topic',
+            },
+            {
+              name: 'description',
+              description: 'This is the description of the topic',
+            },
+            {
+              name: 'course_id',
+              description:
+                'This is the id of the course that the topic belongs to, foreign key to the courses table',
+            },
+            {
+              name: 'created_at',
+              description:
+                'This is the date and time when the topic was created',
+            },
+            {
+              name: 'updated_at',
+              description:
+                'This is the date and time when the topic was last updated',
+            },
+          ],
+        },
+        {
+          name: 'course_enrollments',
+          description:
+            'Many-to-many relationship between users and courses, tracking student and professor course associations',
+          columns: [
+            {
+              name: 'course_id',
+              description:
+                'This is the id of the course that the student is enrolled in, foreign key to the courses table',
+            },
+            {
+              name: 'user_id',
+              description:
+                'This is the id of the user that is enrolled in the course, foreign key to the users table',
+            },
+            {
+              name: 'role',
+              description:
+                'This is the role of the user in the course, this is an enum with values: "student", "professor"',
+            },
+            {
+              name: 'created_at',
+              description:
+                'This is the date and time when the user was enrolled in the course',
+            },
+            {
+              name: 'updated_at',
+              description:
+                'This is the date and time when the user was last updated in the course',
+            },
+          ],
+        },
+        {
+          name: 'professor_subjects',
+          description:
+            'Many-to-many relationship between professors and subjects they teach',
+          columns: [
+            {
+              name: 'professor_id',
+              description:
+                'This is the id of the professor that is teaching the subject, foreign key to the user_profiles table',
+            },
+            {
+              name: 'subject_id',
+              description:
+                'This is the id of the subject that the professor is teaching, foreign key to the subjects table',
+            },
+            {
+              name: 'created_at',
+              description:
+                'This is the date and time when the professor was assigned to the subject',
+            },
+            {
+              name: 'updated_at',
+              description:
+                'This is the date and time when the professor was last updated in the subject',
+            },
+          ],
+        },
+        {
+          name: 'assignment_submissions',
+          description:
+            'Student submissions for assignments, including submitted files and grading information',
+          columns: [
+            {
+              name: 'id',
+              description: 'This is the id of the assignment submission',
+            },
+            {
+              name: 'resource_id',
+              description:
+                'This is the id of the resource that the assignment submission belongs to, foreign key to the resources table',
+            },
+            {
+              name: 'user_id',
+              description:
+                'This is the id of the user that submitted the assignment, foreign key to the users table',
+            },
+            {
+              name: 'file_url',
+              description:
+                'This is the url of the file that the student submitted',
+            },
+            {
+              name: 'marks',
+              description: 'This is the marks of the assignment submission',
+            },
+            {
+              name: 'submitted_at',
+              description:
+                'This is the date and time when the assignment submission was submitted',
+            },
+            {
+              name: 'created_at',
+              description:
+                'This is the date and time when the assignment submission was created',
+            },
+            {
+              name: 'updated_at',
+              description:
+                'This is the date and time when the assignment submission was last updated',
+            },
+          ],
+        },
+        {
+          name: 'user_profiles',
+          description:
+            'Extended user information linked to auth.users, containing role-specific details for students (roll numbers) and professors (employee details)',
+          columns: [
+            {
+              name: 'id',
+              description: 'This is the id of the user profile',
+            },
+            {
+              name: 'user_id',
+              description:
+                'This is the id of the user that the profile belongs to, foreign key to the users table in auth schema',
+            },
+            {
+              name: 'role',
+              description:
+                'This is the role of the user in the system, this is an enum with values: "student", "professor", "admin", "super_admin"',
+            },
+            {
+              name: 'name',
+              description: 'This is the name of the user',
+            },
+            {
+              name: 'image',
+              description: 'This is the image url of the user',
+            },
+            {
+              name: 'bio',
+              description: 'This is the bio of the user',
+            },
+            {
+              name: 'college_id',
+              description:
+                'This is the id of the college that the user belongs to, foreign key to the colleges table',
+            },
+            {
+              name: 'college_roll_no',
+              description:
+                'This is the college roll number of the user, this is unique for the user within a college, only students have college roll numbers',
+            },
+            {
+              name: 'university_roll_no',
+              description:
+                'This is the university roll number of the user, this is unique throughout the database, only students have university roll numbers',
+            },
+            {
+              name: 'created_at',
+              description:
+                'This is the date and time when the user profile was created',
+            },
+            {
+              name: 'updated_at',
+              description:
+                'This is the date and time when the user profile was last updated',
+            },
+            {
+              name: 'joining_date',
+              description:
+                'This is the date and time when the user joined the college, only professors have joining dates',
+            },
+            {
+              name: 'employee_id',
+              description:
+                'This is the employee id of the user, only professors have employee ids',
+            },
+          ],
+        },
+        {
+          name: 'quiz_questions',
+          description:
+            'Questions belonging to quiz resources, including question text and marks allocation',
+          columns: [
+            {
+              name: 'id',
+              description: 'This is the id of the quiz question',
+            },
+            {
+              name: 'resource_id',
+              description:
+                'This is the id of the resource that the quiz question belongs to, foreign key to the resources table',
+            },
+            {
+              name: 'question',
+              description: 'This is the question of the quiz',
+            },
+            {
+              name: 'marks',
+              description: 'This is the marks of the quiz question',
+            },
+            {
+              name: 'created_at',
+              description:
+                'This is the date and time when the quiz question was created',
+            },
+            {
+              name: 'updated_at',
+              description:
+                'This is the date and time when the quiz question was last updated',
+            },
+          ],
+        },
+        {
+          name: 'quiz_options',
+          description:
+            'Multiple choice options for quiz questions, marking correct answers',
+          columns: [
+            {
+              name: 'id',
+              description: 'This is the id of the quiz option',
+            },
+            {
+              name: 'question_id',
+              description:
+                'This is the id of the question that the quiz option belongs to, foreign key to the quiz_questions table',
+            },
+            {
+              name: 'option',
+              description: 'This is the option of the quiz',
+            },
+            {
+              name: 'is_correct',
+              description: 'If this is the correct option of the quiz question',
+            },
+            {
+              name: 'created_at',
+              description:
+                'This is the date and time when the quiz option was created',
+            },
+            {
+              name: 'updated_at',
+              description:
+                'This is the date and time when the quiz option was last updated',
+            },
+          ],
+        },
+        {
+          name: 'material_files',
+          description:
+            'Files and external URLs associated with learning materials',
+          columns: [
+            {
+              name: 'id',
+              description: 'This is the id of the material file',
+            },
+            {
+              name: 'resource_id',
+              description:
+                'This is the id of the resource that the material file belongs to, foreign key to the resources table',
+            },
+            {
+              name: 'file_url',
+              description: 'This is the url of the material file',
+            },
+            {
+              name: 'external_url',
+              description: 'This is the external url of the material file',
+            },
+            {
+              name: 'created_at',
+              description:
+                'This is the date and time when the material file was created',
+            },
+            {
+              name: 'updated_at',
+              description:
+                'This is the date and time when the material file was last updated',
+            },
+          ],
+        },
+        {
+          name: 'resources',
+          description:
+            'Learning resources (quizzes, assignments, materials) linked to topics with publication status',
+          columns: [
+            {
+              name: 'id',
+              description: 'This is the id of the resource',
+            },
+            {
+              name: 'type',
+              description:
+                'This is the type of the resource, this is an enum with values: "quiz", "assignment", "material"',
+            },
+            {
+              name: 'title',
+              description: 'This is the title of the resource',
+            },
+            {
+              name: 'description',
+              description: 'This is the description of the resource',
+            },
+            {
+              name: 'status',
+              description:
+                'This is the status of the resource, this is an enum with values: "draft", "published"',
+            },
+            {
+              name: 'topic_id',
+              description:
+                'This is the id of the topic that the resource belongs to, foreign key to the topics table',
+            },
+            {
+              name: 'created_at',
+              description:
+                'This is the date and time when the resource was created',
+            },
+            {
+              name: 'updated_at',
+              description:
+                'This is the date and time when the resource was last updated',
+            },
+          ],
+        },
+        {
+          name: 'user_departments',
+          description:
+            'Many-to-many relationship between users and their associated departments',
+          columns: [
+            {
+              name: 'user_id',
+              description:
+                'This is the id of the user that is associated with the department, foreign key to the user_profiles table',
+            },
+            {
+              name: 'department_id',
+              description:
+                'This is the id of the department that the user is associated with, foreign key to the departments table',
+            },
+            {
+              name: 'created_at',
+              description:
+                'This is the date and time when the user was associated with the department',
+            },
+            {
+              name: 'updated_at',
+              description:
+                'This is the date and time when the user was last updated in the department',
+            },
+          ],
+        },
+      ],
+    },
+  ],
+};

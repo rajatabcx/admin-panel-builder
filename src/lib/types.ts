@@ -13,7 +13,7 @@ export interface NLQUpdateEvent {
 export interface NLQResponseEvent {
   kind: 'RESPONSE';
   type: 'TEXT' | 'TABLE';
-  payload: string | Array<Record<string, any>>;
+  payload: string;
 }
 
 type SortingType = 'ASC' | 'DESC';
@@ -39,17 +39,6 @@ export type FilterColumn = {
   name: string;
   operator: FilterOperatorSymbol;
   value: string;
-};
-
-export type NLQAgentState = {
-  query: string;
-  intent?: string;
-  relevantCatalog?: string[];
-  relevantTables?: string[];
-  queries?: string[];
-  intermediateResults?: string[];
-  aggregateQuery?: string;
-  finalResult?: string;
 };
 
 export type ColumnInfo = {
@@ -79,3 +68,24 @@ export type CustomNodeData = {
 };
 
 export type CustomNode = Node<CustomNodeData>;
+
+export type Catalog = {
+  schemas: Schema[];
+};
+
+export type Schema = {
+  name: string;
+  description: string;
+  tables: Table[];
+};
+
+export type Table = {
+  name: string;
+  description: string;
+  columns?: Column[];
+};
+
+export type Column = {
+  name: string;
+  description: string;
+};

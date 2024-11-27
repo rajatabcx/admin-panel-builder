@@ -2,14 +2,20 @@
 import React from 'react';
 import Link from 'next/link';
 
-import { testConnection } from '@/actions/debug';
+import { mainData, testConnection } from '@/actions/debug';
 import { Button } from '@/components/ui/button';
 import { handleResponse } from '@/lib/handleResponse';
+import { exampleCatalog } from '../../../catalog';
 
 export default function page() {
   const handleClick = async () => {
     const res = await testConnection();
     handleResponse(res);
+  };
+
+  const handleMainData = async () => {
+    const res = await mainData();
+    console.log(res);
   };
 
   return (
@@ -19,7 +25,9 @@ export default function page() {
       <Button onClick={handleClick} className='w-fit'>
         Debug
       </Button>
-      {/* <Button onClick={handleMainData}>Main Data</Button> */}
+      <Button onClick={handleMainData} className='w-fit'>
+        Main Data
+      </Button>
     </div>
   );
 }

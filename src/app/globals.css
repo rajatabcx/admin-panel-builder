@@ -89,11 +89,22 @@ body {
   }
 }
 
-.react-flow__edge.react-flow__edge-custom.selectable:hover .react-flow__edge-path,
-.react-flow__edge.react-flow__edge-custom.selected:focus .react-flow__edge-path {
+.react-flow__edge.react-flow__edge-custom.selectable:hover
+  .react-flow__edge-path,
+.react-flow__edge.react-flow__edge-custom.selected:focus
+  .react-flow__edge-path {
   stroke: hsl(var(--primary));
 }
 
 .react-flow__edge.react-flow__edge-custom.selectable .react-flow__edge-path {
   stroke: hsl(var(--muted-foreground));
+}
+
+.fancy-scrollbar::-webkit-scrollbar {
+  width: 10px;
+}
+
+.fancy-scrollbar::-webkit-scrollbar-thumb {
+  background: hsl(var(--muted));
+  border-radius: 10px;
 }
