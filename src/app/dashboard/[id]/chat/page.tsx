@@ -110,7 +110,8 @@ export default function ChatPage() {
             className='flex items-center gap-2'
             variant='outline'
             type='submit'
-            disabled={isPending || loading}
+            // disabled={isPending || loading}
+            disabled
           >
             {isPending || loading ? 'Sending' : 'Send'}
             {isPending || loading ? (
