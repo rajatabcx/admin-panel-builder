@@ -51,6 +51,8 @@ You are a seasoned SQL Expert with over 10 years of experience with POSTGRESQL d
         For things like string fields, use the ILIKE operator, as we are using case insensitive search don't use LOWER() function. For example: industry ILIKE '%search_term%'.
 
         ALWAYS try to avoid filtering with "=", expect for primary keys and user defined types like enums, instead use LIKE operator or ILIKE operator with % prefix and suffix. THIS IS VERY IMPORTANT.
+        ALWAYS USE "=" for filtering with user defined types like enums and ids. THIS IS VERY IMPORTANT. THIS HAS TO BE FOLLOWED AT ALL COSTS. OR ELSE THE QUERY WILL FAIL.
+
         USERS ARE NOT VERY GOOD AT SQL, SO DON'T EXPECT TOO MUCH FROM THEM.
 
         \`\`\`sql
@@ -178,6 +180,7 @@ async function relevantRecords(
         ),
       }),
     });
+    console.log(response.object);
     return response.object;
   } catch (error) {
     console.log(`Error getting relevant records for query: ${query}`);
@@ -210,18 +213,7 @@ async function generateQueries(
 
 async function executeQueries(sqlQuery: string) {
   console.log(`Executing query: ${sqlQuery}`);
-  if (
-    !sqlQuery.trim().toLowerCase().startsWith('select') ||
-    sqlQuery.trim().toLowerCase().includes('drop') ||
-    sqlQuery.trim().toLowerCase().includes('delete') ||
-    sqlQuery.trim().toLowerCase().includes('insert') ||
-    sqlQuery.trim().toLowerCase().includes('update') ||
-    sqlQuery.trim().toLowerCase().includes('alter') ||
-    sqlQuery.trim().toLowerCase().includes('truncate') ||
-    sqlQuery.trim().toLowerCase().includes('create') ||
-    sqlQuery.trim().toLowerCase().includes('grant') ||
-    sqlQuery.trim().toLowerCase().includes('revoke')
-  ) {
+  if (!sqlQuery.trim().toLowerCase().startsWith('select')) {
     return 'You are only allowed to execute SELECT queries.';
   }
 
@@ -236,6 +228,7 @@ async function executeQueries(sqlQuery: string) {
   try {
     await client.connect();
     const data = await client.query(sqlQuery);
+    console.log(data.rows);
     return data.rows;
   } catch (e: any) {
     console.log(`Error executing query: ${sqlQuery}`);

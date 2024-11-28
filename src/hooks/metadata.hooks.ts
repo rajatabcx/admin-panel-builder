@@ -1,4 +1,4 @@
-import { getTables } from '@/actions/metadata';
+import { getSchemas, getTables } from '@/actions/metadata';
 import { useQuery } from '@tanstack/react-query';
 
 export const useTables = (schema: string, enabled: boolean) => {
@@ -9,5 +9,15 @@ export const useTables = (schema: string, enabled: boolean) => {
       return response.tables;
     },
     enabled,
+  });
+};
+
+export const useSchemas = () => {
+  return useQuery({
+    queryKey: ['schemas'],
+    queryFn: async () => {
+      const response = await getSchemas();
+      return response.schemas;
+    },
   });
 };

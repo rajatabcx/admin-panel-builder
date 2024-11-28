@@ -92,6 +92,8 @@ export default function DatabasePage() {
     }
   }, [tableNodes, tableEdges, setNodes, setEdges]);
 
+  console.log(data);
+
   return (
     <div className='h-full w-full flex flex-col'>
       <div className='flex-1'>

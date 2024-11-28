@@ -128,19 +128,30 @@ export async function rows({
     const total = parseInt(countResult.rows[0].total);
     const pageCount = Math.ceil(total / pageSize);
 
+    const updatedFilterColumns: (FilterColumn & { order?: number })[] = [];
+    let order = 1;
+    for (const filter of filteredColumns) {
+      if (filter.operator !== 'IS' && filter.operator !== 'IS NOT') {
+        updatedFilterColumns.push({ ...filter, order });
+        order++;
+      } else {
+        updatedFilterColumns.push({ ...filter });
+      }
+    }
+
     // Then fetch paginated data
     const dataQuery = `
         SELECT *
         FROM ${schema}.${table}
         ${
-          filteredColumns.length
-            ? `WHERE ${filteredColumns
+          updatedFilterColumns.length
+            ? `WHERE ${updatedFilterColumns
                 .map(
-                  (column, index) =>
+                  (column) =>
                     `${column.name} ${column.operator} ${
                       column.operator === 'IS' || column.operator === 'IS NOT'
                         ? `${column.value}`
-                        : `$${index + 1}`
+                        : `$${column.order}`
                     }`
                 )
                 .join(' AND ')}`
@@ -157,7 +168,7 @@ export async function rows({
         OFFSET ${offset};
       `;
 
-    const filterValues = filteredColumns
+    const filterValues = updatedFilterColumns
       .filter(
         (column) => column.operator !== 'IS' && column.operator !== 'IS NOT'
       )

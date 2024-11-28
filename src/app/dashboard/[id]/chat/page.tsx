@@ -43,6 +43,7 @@ export default function ChatPage() {
     try {
       setLoading(true);
       setMessages((prev) => [...prev, { message: data.query, type: 'user' }]);
+      form.reset();
       const stream = await mutateAsync(data.query);
       for await (const event of stream) {
         if (event.kind === 'UPDATE') {
@@ -55,7 +56,6 @@ export default function ChatPage() {
           ]);
         }
       }
-      form.reset();
     } catch (error) {
       console.error(error);
       toast.error('An error occurred while processing your query.');
