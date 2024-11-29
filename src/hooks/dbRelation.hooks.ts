@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { relation } from '@/actions/dbRelation';
+import { relation, specificTableSchemaRelation } from '@/actions/dbRelation';
 
 export const useRelation = (schema: string, enabled: boolean) => {
   return useQuery({
@@ -9,5 +9,19 @@ export const useRelation = (schema: string, enabled: boolean) => {
       return response;
     },
     enabled,
+  });
+};
+
+export const useSpecificTableSchemaRelation = (
+  schema: string,
+  tables: string[],
+  enabled: boolean
+) => {
+  return useQuery({
+    queryKey: ['specificTableSchemaRelation', schema, tables],
+    queryFn: async () => {
+      const response = await specificTableSchemaRelation(schema, tables);
+      return response;
+    },
   });
 };

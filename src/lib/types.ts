@@ -93,4 +93,9 @@ export type Column = {
   isPrimaryKey: boolean;
   isUnique: boolean;
   isForeignKey: boolean;
+  foreignKeyReference?: {
+    table: string;
+    column: string;
+    relationType: string;
+  };
 };
