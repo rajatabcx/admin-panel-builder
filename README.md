@@ -88,3 +88,8 @@ arr.map((row) => ({
 <!-- generate sql query -->
 
 <!-- OR use full text search with the to_tsvector and to_tsquery functions, if possible. -->
+
+Which products don't have a review? also which products has he lowest review,
+what is the rating and whats the review and who left that lowest rating, give me
+the user details list of all the products from high to low price in electronics
+category

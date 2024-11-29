@@ -6,14 +6,20 @@ export type ActionResponse = {
   message: string;
 };
 
+export enum NLQResponse {
+  UPDATE = 'UPDATE',
+  RESPONSE = 'RESPONSE',
+}
+
 export interface NLQUpdateEvent {
-  kind: 'UPDATE';
+  kind: NLQResponse.UPDATE;
   status: string;
 }
 export interface NLQResponseEvent {
-  kind: 'RESPONSE';
+  kind: NLQResponse.RESPONSE;
   type: 'TEXT' | 'TABLE';
   payload: string;
+  responseType: ResponseType;
 }
 
 type SortingType = 'ASC' | 'DESC';

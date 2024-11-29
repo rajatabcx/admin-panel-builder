@@ -108,3 +108,51 @@ body {
   background: hsl(var(--muted));
   border-radius: 10px;
 }
+
+.markdown table {
+  width: 100%;
+  border-collapse: collapse;
+  font-weight: 400;
+}
+.markdown th,
+.markdown td {
+  border: 1px solid #ccc;
+  padding: 8px;
+  text-align: left;
+}
+
+.markdown p {
+  margin: 0;
+  padding: 0;
+  line-height: 1.5;
+  font-weight: 400;
+}
+
+.markdown ul {
+  margin: 0;
+  padding: 0;
+  list-style-type: disc;
+  list-style-position: inside;
+  line-height: 1.2;
+  font-weight: 400;
+}
+
+.markdown ol {
+  margin: 0;
+  padding: 0;
+  line-height: 0;
+  font-weight: 400;
+}
+
+.markdown h1,
+.markdown h2,
+.markdown h3,
+.markdown h4,
+.markdown h5,
+.markdown h6 {
+  margin: 0;
+  padding: 0;
+  font-size: 1rem;
+  line-height: 1.2;
+  font-weight: 600;
+}

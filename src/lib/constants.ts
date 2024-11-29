@@ -48,4 +48,5 @@ export enum NlqStatus {
   TASK_COMPLETED = 'Agent has completed the task.',
   TASK_FAILED = 'Agent has failed to complete the task.',
   RELEVANT_TABLES = 'Finding relevant tables...',
+  INTENT_ANALYSIS = 'Analyzing intent...',
 }

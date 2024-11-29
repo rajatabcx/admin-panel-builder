@@ -5,13 +5,15 @@ import { z } from 'zod';
 import { Loader, SendHorizonal } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { toast } from 'sonner';
 
 import { Button } from '@/components/ui/button';
 import { useChat } from '@/hooks/chat.hooks';
 import { Form } from '@/components/ui/form';
-import { toast } from 'sonner';
 import { TextInput } from '@/components/form/TextInput';
 import { cn } from '@/lib/utils';
+import { ResponseType } from '@/lib/constants';
+import { ChatBubble } from '@/components/chat/ChatBubble';
 
 const schema = z.object({
   query: z.string(),
@@ -27,11 +29,18 @@ export default function ChatPage() {
 
   const [status, setStatus] = useState<string>('');
   const [messages, setMessages] = useState<
-    { message: string; type: 'user' | 'bot' }[]
+    (
+      | { message: string; type: 'user' }
+      | { message: string; type: 'bot'; responseType: ResponseType }
+    )[]
   >([
     {
-      message: 'Hello! How can I assist you today?',
+      message: `
+Welcome to ADP 🚀  
+Your go-to platform for smarter data visualization and insights! Ready to level up your workflow? Let’s dive in!  
+`,
       type: 'bot',
+      responseType: ResponseType.INFO,
     },
   ]);
   const [loading, setLoading] = useState<boolean>(false);
@@ -52,7 +61,11 @@ export default function ChatPage() {
           setStatus('');
           setMessages((prev) => [
             ...prev,
-            { message: event.payload, type: 'bot' },
+            {
+              message: event.payload,
+              type: 'bot',
+              responseType: event.responseType,
+            },
           ]);
         }
       }
@@ -68,23 +81,22 @@ export default function ChatPage() {
     if (scrollRef.current) {
       scrollRef.current.scrollIntoView({ behavior: 'smooth' });
     }
-  }, [messages]);
+  }, [messages, status]);
 
   return (
     <div className='w-full h-screen flex flex-col py-4'>
       <div className='flex-1 overflow-auto space-y-4 fancy-scrollbar px-4 pb-6'>
         {messages.map((message, index) => (
-          <p
+          <ChatBubble
             key={index}
-            className={cn(
-              'max-w-[75%] w-max px-3 py-2 rounded-lg',
+            message={message.message}
+            variant={
               message.type === 'bot'
-                ? 'bg-sidebar text-primary'
-                : 'bg-secondary-foreground text-secondary ml-auto'
-            )}
-          >
-            {message.message}
-          </p>
+                ? message.responseType
+                : ResponseType.SUCCESS
+            }
+            type={message.type}
+          />
         ))}
         {status ? (
           <div className='inline-flex items-center animate-pulse'>
