@@ -50,6 +50,8 @@ export default function CatalogPage() {
     setIsLoading(false);
   };
 
+  console.log(catalog);
+
   return (
     <div className='flex h-full md:gap-6 xl:gap-10 justify-between p-4'>
       <div className='w-[40%]'>
