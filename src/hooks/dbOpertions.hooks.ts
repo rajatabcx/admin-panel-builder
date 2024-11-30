@@ -10,6 +10,7 @@ export const useRows = ({
   sortingColumns,
   table,
   filteredColumns,
+  universalSearch,
 }: {
   schema: string;
   table: string;
@@ -18,6 +19,7 @@ export const useRows = ({
   sortingColumns: SortingColumn[];
   filteredColumns: FilterColumn[];
   enabled: boolean;
+  universalSearch: string;
 }) => {
   return useQuery({
     queryKey: [
@@ -28,6 +30,7 @@ export const useRows = ({
       limit,
       sortingColumns,
       filteredColumns,
+      universalSearch,
     ],
     queryFn: async () => {
       const response = await rows({
@@ -37,6 +40,7 @@ export const useRows = ({
         pageSize: limit,
         sortingColumns,
         filteredColumns,
+        universalSearch,
       });
       return response;
     },

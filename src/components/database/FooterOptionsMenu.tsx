@@ -1,5 +1,5 @@
 import React, { Dispatch, SetStateAction, useEffect, useState } from 'react';
-import { ArrowLeft, ArrowRight, RefreshCcw } from 'lucide-react';
+import { ArrowLeft, ArrowRight, HardHat, RefreshCcw } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -11,6 +11,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { useQueryClient } from '@tanstack/react-query';
 import { cn } from '@/lib/utils';
+import { Toggle } from '@/components/ui/toggle';
 
 export function FooterOptionsMenu({
   pagination,
@@ -19,6 +20,8 @@ export function FooterOptionsMenu({
   pageCount,
   isLoading,
   setSelected,
+  engineerMode,
+  setEngineerMode,
 }: {
   pagination: { page: number; limit: number };
   setPagination: (pagination: { page: number; limit: number }) => void;
@@ -26,6 +29,8 @@ export function FooterOptionsMenu({
   pageCount: number;
   isLoading: boolean;
   setSelected: Dispatch<SetStateAction<string[]>>;
+  engineerMode: boolean;
+  setEngineerMode: Dispatch<SetStateAction<boolean>>;
 }) {
   const [paginationState, setPaginationState] = useState({
     total,
@@ -49,17 +54,26 @@ export function FooterOptionsMenu({
 
   return (
     <div className='flex items-center justify-between w-full px-4 py-2 border-t gap-2 bg-background'>
-      <Button
-        variant='ghost'
-        size='sm'
-        onClick={handleRefresh}
-        disabled={isLoading}
-      >
-        <RefreshCcw
-          className={cn('w-4 h-4', isLoading ? 'animate-spin' : null)}
-        />{' '}
-        Refresh
-      </Button>
+      <div>
+        <Button
+          variant='ghost'
+          size='sm'
+          onClick={handleRefresh}
+          disabled={isLoading}
+        >
+          <RefreshCcw
+            className={cn('w-4 h-4', isLoading ? 'animate-spin' : null)}
+          />{' '}
+          Refresh
+        </Button>
+        <Toggle
+          defaultChecked={engineerMode}
+          onClick={() => setEngineerMode(!engineerMode)}
+        >
+          <HardHat className='w-4 h-4' />
+          Engineer Mode
+        </Toggle>
+      </div>
       <div className='flex items-center gap-2'>
         <Button
           variant='outline'

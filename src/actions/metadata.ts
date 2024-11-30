@@ -112,3 +112,45 @@ export async function getTables(
     await client.end();
   }
 }
+
+export async function customTypeValues(
+  typeName: string
+): Promise<ActionResponse & { values: string[] }> {
+  const dbUrl = await getDbUrl();
+
+  if (!dbUrl || !typeName)
+    return {
+      type: ResponseType.ERROR,
+      message: 'Database URL and type name are required',
+      values: [],
+    };
+
+  const client = new Client({
+    connectionString: dbUrl,
+    ssl: {
+      rejectUnauthorized: false,
+    },
+  });
+
+  try {
+    await client.connect();
+    const enumQuery = `
+    SELECT e.enumlabel AS value
+    FROM pg_type t
+    JOIN pg_enum e ON t.oid = e.enumtypid
+    WHERE t.typname = $1;
+  `;
+    const enumResult = await client.query(enumQuery, [typeName]);
+    return {
+      values: enumResult.rows.map((row) => row.value),
+      type: ResponseType.SUCCESS,
+      message: 'Custom type values fetched successfully',
+    };
+  } catch (error: any) {
+    return {
+      type: ResponseType.ERROR,
+      message: error.message,
+      values: [],
+    };
+  }
+}

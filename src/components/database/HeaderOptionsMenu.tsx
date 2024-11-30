@@ -1,5 +1,5 @@
 import React from 'react';
-import { LayoutGrid, Plus, Table } from 'lucide-react';
+import { Filter, LayoutGrid, Plus, Table } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
@@ -9,6 +9,7 @@ import SortBuilder from './SortBuilder';
 import { SidebarTrigger } from '@/components/ui/sidebar';
 import { FilterColumn, SortingColumn } from '@/lib/types';
 import FilterBuilder from './FilterBuilder';
+import { Input } from '@/components/ui/input';
 
 export function HeaderOptionsMenu({
   view,
@@ -19,6 +20,8 @@ export function HeaderOptionsMenu({
   sortingColumns,
   handleApplyFilter,
   editable,
+  engineerMode,
+  setSearch,
 }: {
   view: 'table' | 'card';
   setView: (view: 'table' | 'card') => void;
@@ -28,6 +31,8 @@ export function HeaderOptionsMenu({
   sortingColumns: number;
   handleApplyFilter: (data: FilterColumn[]) => void;
   editable: boolean;
+  engineerMode: boolean;
+  setSearch: (search: string) => void;
 }) {
   return (
     <div className='flex items-center justify-between w-full px-4 py-3 border-b bg-background'>
@@ -60,16 +65,31 @@ export function HeaderOptionsMenu({
         </Toggle>
       </div>
       <div className='flex items-center gap-2'>
-        <FilterBuilder
-          columns={columns}
-          handleApplyFilter={handleApplyFilter}
-          filteredColumns={filteredColumns}
-        />
-        <SortBuilder
-          columns={columns}
-          handleApplySorting={handleApplySorting}
-          sortingColumns={sortingColumns}
-        />
+        {engineerMode ? null : (
+          <Input
+            placeholder='Search for anything...'
+            onChange={(e) => setSearch(e.target.value)}
+            className='w-[350px] h-full'
+          />
+        )}
+        {engineerMode ? (
+          <>
+            <FilterBuilder
+              columns={columns}
+              handleApplyFilter={handleApplyFilter}
+              filteredColumns={filteredColumns}
+            />
+            <SortBuilder
+              columns={columns}
+              handleApplySorting={handleApplySorting}
+              sortingColumns={sortingColumns}
+            />
+          </>
+        ) : (
+          <Button variant='secondary' size='sm'>
+            <Filter className='w-4 h-4' /> Advanced Filters
+          </Button>
+        )}
         {editable ? (
           <>
             <Separator orientation='vertical' className='h-4' />

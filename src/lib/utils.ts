@@ -9,29 +9,50 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-export const formatCellValue = (value: any, type: string) => {
-  if (value === null) return 'NULL';
+export const formatCellValue = (
+  value: any,
+  type: string,
+  universalSearch: string
+) => {
+  if (value === null) return `<span class='text-muted-foreground'>NULL</span>`;
+  if (!value) return `<span class='text-muted-foreground'>EMPTY</span>`;
 
-  if (!value) return 'EMPTY';
-
+  // Format the value first
+  let formattedValue = '';
   switch (type.toLowerCase()) {
     case 'datetime':
     case 'date':
     case 'timestamp':
     case 'timestamptz':
-      return format(value, 'MM/dd/yyyy, HH:mm:ss');
+      formattedValue = format(value, 'MM/dd/yyyy, HH:mm:ss');
+      break;
     case 'json':
     case 'jsonb':
-      return JSON.stringify(value, null, 2);
+      formattedValue = JSON.stringify(value, null, 2);
+      break;
     case 'boolean':
-      return value ? 'Yes' : 'No';
+      formattedValue = value ? 'Yes' : 'No';
+      break;
     case 'number':
     case 'integer':
     case 'float':
-      return typeof value === 'number' ? value.toLocaleString() : value;
+      formattedValue =
+        typeof value === 'number' ? value.toLocaleString() : value;
+      break;
     default:
-      return String(value);
+      formattedValue = String(value);
   }
+
+  // If there's a universal search term, wrap matching parts with mark tags
+  if (universalSearch) {
+    const regex = new RegExp(`(${universalSearch})`, 'gi');
+    return formattedValue.replace(
+      regex,
+      '<mark class="bg-yellow-400 px-1 rounded">$1</mark>'
+    );
+  }
+
+  return formattedValue;
 };
 
 export const convertRowsToCsv = (headers: string[], rows: any[]) => {

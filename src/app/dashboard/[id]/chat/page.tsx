@@ -11,7 +11,6 @@ import { Button } from '@/components/ui/button';
 import { useChat } from '@/hooks/chat.hooks';
 import { Form } from '@/components/ui/form';
 import { TextInput } from '@/components/form/TextInput';
-import { cn } from '@/lib/utils';
 import { ResponseType } from '@/lib/constants';
 import { ChatBubble } from '@/components/chat/ChatBubble';
 
@@ -122,8 +121,7 @@ Your go-to platform for smarter data visualization and insights! Ready to level 
             className='flex items-center gap-2'
             variant='outline'
             type='submit'
-            // disabled={isPending || loading}
-            disabled
+            disabled={isPending || loading}
           >
             {isPending || loading ? 'Sending' : 'Send'}
             {isPending || loading ? (

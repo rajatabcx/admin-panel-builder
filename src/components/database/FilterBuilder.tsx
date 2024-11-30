@@ -34,7 +34,7 @@ export default function FilterBuilder({
   return (
     <Popover open={isOpen} onOpenChange={setIsOpen}>
       <PopoverTrigger asChild>
-        <Button variant={!!filteredColumns ? 'outline' : 'ghost'} size='sm'>
+        <Button variant={!!filteredColumns ? 'secondary' : 'ghost'} size='sm'>
           <Filter className='w-4 h-4' />{' '}
           {!!filteredColumns
             ? `Filtered by ${filteredColumns} rules`

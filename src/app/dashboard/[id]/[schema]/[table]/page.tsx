@@ -1,6 +1,7 @@
 'use client';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
+import { useDebounce } from 'use-debounce';
 
 import { FooterOptionsMenu } from '@/components/database/FooterOptionsMenu';
 import { HeaderOptionsMenu } from '@/components/database/HeaderOptionsMenu';
@@ -25,9 +26,17 @@ export default function TablePage() {
     limit: 100,
   });
   const [view, setView] = useState<'table' | 'card'>('table');
+  const [engineerMode, setEngineerMode] = useState(false);
+
+  const [hiddenColumns, setHiddenColumns] = useState<string[]>([]);
+
   const [selected, setSelected] = useState<string[]>([]);
+
   const [sortingColumns, setSortingColumns] = useState<SortingColumn[]>([]);
   const [filteredColumns, setFilteredColumns] = useState<FilterColumn[]>([]);
+  const [search, setSearch] = useState<string>('');
+
+  const [universalSearch] = useDebounce(search, 1000);
 
   const { data, isLoading, isFetching } = useRows({
     schema,
@@ -37,6 +46,7 @@ export default function TablePage() {
     sortingColumns,
     filteredColumns,
     enabled: !!schema && !!table,
+    universalSearch,
   });
 
   const handleExportCsv = () => {
@@ -58,6 +68,12 @@ export default function TablePage() {
     setFilteredColumns(data);
   };
 
+  useEffect(() => {
+    setSortingColumns([]);
+    setFilteredColumns([]);
+    setSearch('');
+  }, [engineerMode]);
+
   return (
     <div className='w-full h-screen'>
       {/* header options menu */}
@@ -77,6 +93,8 @@ export default function TablePage() {
           sortingColumns={sortingColumns.length}
           handleApplyFilter={handleApplyFilter}
           editable={!!data?.editable}
+          engineerMode={engineerMode}
+          setSearch={setSearch}
         />
       )}
       {/*main table  */}
@@ -98,6 +116,12 @@ export default function TablePage() {
             error={data?.type === ResponseType.ERROR}
             errorMessage={data?.message || ''}
             tableName={table}
+            engineerMode={engineerMode}
+            hiddenColumns={hiddenColumns}
+            setHiddenColumns={setHiddenColumns}
+            sortingColumns={sortingColumns}
+            setSortingColumns={setSortingColumns}
+            universalSearch={universalSearch}
           />
         )}
       </div>
@@ -109,6 +133,8 @@ export default function TablePage() {
         pageCount={data?.pageCount || 0}
         isLoading={isLoading || isFetching}
         setSelected={setSelected}
+        engineerMode={engineerMode}
+        setEngineerMode={setEngineerMode}
       />
     </div>
   );

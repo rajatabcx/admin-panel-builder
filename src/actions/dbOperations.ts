@@ -51,7 +51,7 @@ const getColumns = async (schema: string, table: string) => {
       name: row.column_name,
       type: row.udt_name,
     }));
-    console.log(ownerResult.rows[0]?.table_owner, username);
+
     return {
       columns,
       editable:
@@ -76,6 +76,7 @@ export async function rows({
   filteredColumns = [],
   page = 1,
   pageSize = 10,
+  universalSearch,
 }: {
   schema: string;
   table: string;
@@ -83,6 +84,7 @@ export async function rows({
   pageSize?: number;
   sortingColumns?: SortingColumn[];
   filteredColumns?: FilterColumn[];
+  universalSearch?: string;
 }): Promise<
   ActionResponse & {
     data: any[];
@@ -144,7 +146,12 @@ export async function rows({
         SELECT *
         FROM ${schema}.${table}
         ${
-          updatedFilterColumns.length
+          universalSearch
+            ? `WHERE ${columns
+                .filter((column) => column.type === 'text')
+                .map((column) => `${column.name} ILIKE '%${universalSearch}%'`)
+                .join(' OR ')}`
+            : updatedFilterColumns.length
             ? `WHERE ${updatedFilterColumns
                 .map(
                   (column) =>

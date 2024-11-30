@@ -28,7 +28,7 @@ export default function SortBuilder({
   return (
     <Popover open={isOpen} onOpenChange={setIsOpen}>
       <PopoverTrigger asChild>
-        <Button variant={!!sortingColumns ? 'outline' : 'ghost'} size='sm'>
+        <Button variant={!!sortingColumns ? 'secondary' : 'ghost'} size='sm'>
           <ArrowUpDown className='w-4 h-4' />{' '}
           {!!sortingColumns ? `Sorted by ${sortingColumns} rules` : 'Sort'}
         </Button>

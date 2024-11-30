@@ -12,6 +12,10 @@ import { cn, formatCellValue } from '@/lib/utils';
 import { Checkbox } from '@/components/ui/checkbox';
 import ExpandedData from './ExpandedData';
 import { Card } from '@/components/ui/card';
+import { ArrowUpDown } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import SortingMenu from './SortingMenu';
+import { SortingColumn } from '@/lib/types';
 
 export function MainTable({
   data,
@@ -21,6 +25,12 @@ export function MainTable({
   errorMessage,
   error,
   tableName,
+  engineerMode,
+  hiddenColumns,
+  setHiddenColumns,
+  sortingColumns,
+  setSortingColumns,
+  universalSearch,
 }: {
   data: any[];
   headers: { name: string; type: string }[];
@@ -29,6 +39,12 @@ export function MainTable({
   errorMessage: string;
   error: boolean;
   tableName: string;
+  engineerMode: boolean;
+  hiddenColumns: string[];
+  setHiddenColumns: Dispatch<SetStateAction<string[]>>;
+  sortingColumns: SortingColumn[];
+  setSortingColumns: Dispatch<SetStateAction<SortingColumn[]>>;
+  universalSearch: string;
 }) {
   if (!headers.length) {
     return <Card>{error ? errorMessage : 'No data found'}</Card>;
@@ -58,16 +74,27 @@ export function MainTable({
               />
             </div>
           </TableHead>
-          {headers.map((header) => (
-            <TableHead key={header.name} className='border-r border-l'>
-              <p className='flex items-center gap-2 w-[250px] truncate'>
-                {header.name}
-                <span className='text-xs text-muted-foreground'>
-                  ({header.type})
-                </span>
-              </p>
-            </TableHead>
-          ))}
+          {headers
+            .filter((header) => !hiddenColumns.includes(header.name))
+            .map((header) => (
+              <TableHead key={header.name} className='border-r border-l'>
+                <p className='flex items-center gap-2 w-[250px] truncate'>
+                  {header.name}
+                  <span className='text-xs text-muted-foreground'>
+                    ({header.type})
+                  </span>
+                  {engineerMode ? null : (
+                    <SortingMenu
+                      columnName={header.name}
+                      columnType={header.type}
+                      setHiddenColumns={setHiddenColumns}
+                      sortingColumns={sortingColumns}
+                      setSortingColumns={setSortingColumns}
+                    />
+                  )}
+                </p>
+              </TableHead>
+            ))}
         </TableRow>
       </TableHeader>
       <TableBody>
@@ -103,19 +130,28 @@ export function MainTable({
                   <ExpandedData data={row} tableName={tableName} updating />
                 </div>
               </TableCell>
-              {headers.map((header) => (
-                <TableCell
-                  key={header.name}
-                  className={cn(
-                    'truncate border-r border-l',
-                    index === data.length - 1 ? 'border-b' : ''
-                  )}
-                >
-                  <div className='w-[250px] truncate'>
-                    {formatCellValue(row[header.name], header.type)}
-                  </div>
-                </TableCell>
-              ))}
+              {headers
+                .filter((header) => !hiddenColumns.includes(header.name))
+                .map((header) => (
+                  <TableCell
+                    key={header.name}
+                    className={cn(
+                      'truncate border-r border-l',
+                      index === data.length - 1 ? 'border-b' : ''
+                    )}
+                  >
+                    <div
+                      className='w-[250px] truncate'
+                      dangerouslySetInnerHTML={{
+                        __html: formatCellValue(
+                          row[header.name],
+                          header.type,
+                          universalSearch
+                        ),
+                      }}
+                    />
+                  </TableCell>
+                ))}
             </TableRow>
           ))
         )}
