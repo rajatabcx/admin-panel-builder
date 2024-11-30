@@ -86,9 +86,7 @@ export function HeaderOptionsMenu({
             />
           </>
         ) : (
-          <Button variant='secondary' size='sm'>
-            <Filter className='w-4 h-4' /> Advanced Filters
-          </Button>
+          null
         )}
         {editable ? (
           <>
