@@ -41,13 +41,13 @@ export const mainData = async () => {
 
     // Query to get all schemas and their tables
     const query = `
-   SELECT user_profiles.name 
-FROM user_profiles 
-JOIN departments ON user_profiles.id = departments.hod_id 
-JOIN colleges ON departments.college_id = colleges.id 
-WHERE LOWER(colleges.slug) ILIKE LOWER('%bppimt%') 
-AND LOWER(departments.name) ILIKE LOWER('%electronics%')
-      `;
+       SELECT user_profiles.name
+    FROM user_profiles
+    JOIN departments ON user_profiles.id = departments.hod_id
+    JOIN colleges ON departments.college_id = colleges.id
+    WHERE LOWER(colleges.slug) ILIKE LOWER('%bppimt%')
+    AND LOWER(departments.name) ILIKE LOWER('%electronics%')
+          `;
 
     const res = await client.query(query);
 

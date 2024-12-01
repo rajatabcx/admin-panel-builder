@@ -105,3 +105,9 @@ export type Column = {
     relationType: string;
   };
 };
+
+export type Project = {
+  name: string;
+  description: string;
+  connectionString: string;
+};
