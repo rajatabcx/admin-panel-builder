@@ -71,8 +71,10 @@ export async function getProjects(): Promise<{
   const { data, error } = await supabase
     .from('projects')
     .select('id,name,description,created_at')
-    .eq('userId', user.id)
+    .eq('user_id', user.id)
     .order('created_at', { ascending: false });
+
+  console.log(data);
 
   if (error || !data) {
     return {
