@@ -1,5 +1,5 @@
 import React from 'react';
-import { ChevronRight } from 'lucide-react';
+import { ChevronRight, Construction } from 'lucide-react';
 import Link from 'next/link';
 
 import {
@@ -11,7 +11,7 @@ import {
 } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 import { buttonVariants } from '@/components/ui/button';
-import ShineBorder from '@/components/magic-ui/shine-border';
+import { ShineBorder } from '@/components/magic-ui/shine-border';
 
 export default function SettingsPage() {
   return (
@@ -23,11 +23,11 @@ export default function SettingsPage() {
         <Card className='rounded-lg border-none bg-transparent'>
           <CardHeader>
             <CardTitle className='text-2xl font-semibold mb-5'>
-              Schema
+              Under Construction <Construction className='size-5' />
             </CardTitle>
             <CardDescription className='text-muted-foreground'>
-              Select database or a table from the navigation panel on the left
-              to view its data, or create a new one.
+              This page is currently being built as we speak. So please be
+              patient.
             </CardDescription>
           </CardHeader>
           <CardFooter>
