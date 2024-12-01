@@ -156,7 +156,7 @@ export const catalogExists = async (
   }
   const supabase = await createClient();
   const { data, error } = await supabase
-    .from('catalog')
+    .from('catalogs')
     .select('id')
     .eq('project_id', projectId)
     .single();
@@ -175,7 +175,7 @@ export const catalogExists = async (
   };
 };
 
-export const createCatalog = async (
+export const upsertCatalog = async (
   projectId: string,
   catalog: Catalog
 ): Promise<ActionResponse> => {
@@ -189,7 +189,7 @@ export const createCatalog = async (
   const supabase = await createClient();
 
   const { error } = await supabase
-    .from('catalog')
+    .from('catalogs')
     .upsert(
       { project_id: projectId, catalog: catalog },
       { onConflict: 'project_id' }
@@ -220,7 +220,7 @@ export const catalog = async (
   }
   const supabase = await createClient();
   const { data, error } = await supabase
-    .from('catalog')
+    .from('catalogs')
     .select('catalog, created_at')
     .eq('project_id', projectId)
     .single();

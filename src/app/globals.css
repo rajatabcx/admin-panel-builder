@@ -156,3 +156,7 @@ body {
   line-height: 1.2;
   font-weight: 600;
 }
+
+.react-json-view {
+  background-color: transparent !important;
+}

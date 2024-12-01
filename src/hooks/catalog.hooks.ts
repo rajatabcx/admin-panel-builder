@@ -1,6 +1,8 @@
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 
-import { catalog, catalogExists } from '@/actions/catalog';
+import { catalog, catalogExists, upsertCatalog } from '@/actions/catalog';
+import { Catalog } from '@/lib/types';
+import { handleResponse } from '@/lib/handleResponse';
 
 export const useCatalog = (projectId: string, enabled: boolean = true) => {
   return useQuery({
@@ -24,5 +26,21 @@ export const useCatalogExists = (
       return response.exists;
     },
     enabled,
+  });
+};
+
+export const useUpdateCatalog = () => {
+  return useMutation({
+    mutationFn: async ({
+      projectId,
+      catalog,
+    }: {
+      projectId: string;
+      catalog: Catalog;
+    }) => {
+      const response = await upsertCatalog(projectId, catalog);
+      handleResponse(response);
+      return response;
+    },
   });
 };

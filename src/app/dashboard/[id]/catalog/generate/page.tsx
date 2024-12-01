@@ -64,7 +64,7 @@ export default function CatalogGeneratePage() {
       </div>
       <Separator orientation='vertical' />
       <div className='flex-1 overflow-y-auto'>
-        <CatalogViewer catalog={catalog} isLoading={isLoading} />
+        <CatalogViewer projectId={id} catalog={catalog} isLoading={isLoading} />
       </div>
     </div>
   );

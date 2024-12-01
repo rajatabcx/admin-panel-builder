@@ -20,6 +20,9 @@ export function SchemaSelectView({
   const { data, isLoading } = useSchemas(id);
   return (
     <div className='h-full flex flex-col gap-4'>
+      <h1 className='text-2xl font-semibold'>
+        Select necessary schemas and tables
+      </h1>
       <div className='flex flex-col gap-3 overflow-x-hidden overflow-y-auto flex-1'>
         {isLoading ? (
           Array.from({ length: 10 }).map((_, index) => (
@@ -45,7 +48,7 @@ export function SchemaSelectView({
         )}
       </div>
       <div className='flex items-center justify-center gap-2'>
-        <Button variant='outline' onClick={handleGenerateCatalog}>
+        <Button variant='secondary' onClick={handleGenerateCatalog}>
           Generate Catalog
         </Button>
       </div>
