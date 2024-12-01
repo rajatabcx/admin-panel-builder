@@ -3,6 +3,7 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 import { FilterColumn, SortingColumn } from '@/lib/types';
 
 export const useRows = ({
+  id,
   enabled,
   limit,
   page,
@@ -12,6 +13,7 @@ export const useRows = ({
   filteredColumns,
   universalSearch,
 }: {
+  id: string;
   schema: string;
   table: string;
   page: number;
@@ -24,6 +26,7 @@ export const useRows = ({
   return useQuery({
     queryKey: [
       'rows',
+      id,
       schema,
       table,
       page,
@@ -34,6 +37,7 @@ export const useRows = ({
     ],
     queryFn: async () => {
       const response = await rows({
+        id,
         schema,
         table,
         page,
@@ -48,10 +52,20 @@ export const useRows = ({
   });
 };
 
-export const useDeleteRows = (schema: string, table: string, ids: string[]) => {
+export const useDeleteRows = ({
+  id,
+  schema,
+  table,
+  ids,
+}: {
+  id: string;
+  schema: string;
+  table: string;
+  ids: string[];
+}) => {
   return useMutation({
     mutationFn: async () => {
-      const response = await deleteRows(schema, table, ids);
+      const response = await deleteRows({ id, schema, table, ids });
       return response;
     },
   });

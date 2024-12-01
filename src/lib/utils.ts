@@ -180,3 +180,16 @@ export const getEdgeLabel = (
     return { data: { startLabel: 'N', endLabel: 'M' } };
   return { data: { startLabel: '', endLabel: '' } };
 };
+
+export function determineRelationType(
+  hasUniqueConstraint: boolean,
+  isUnique: boolean
+): string {
+  if (hasUniqueConstraint && isUnique) {
+    return 'ONE_TO_ONE';
+  } else if (isUnique) {
+    return 'ONE_TO_ONE';
+  } else {
+    return 'ONE_TO_MANY';
+  }
+}

@@ -42,17 +42,17 @@ export default function SignupPage() {
       if (res.type === ResponseType.SUCCESS) {
         router.push('/dashboard');
       }
-    } catch (error) {
-      console.log(error);
-    }
+    } catch (error) {}
   };
 
   return (
     <div className='flex justify-center items-center h-screen'>
-      <Card className='w-full max-w-lg'>
+      <Card className='w-full max-w-lg bg-muted/20'>
         <CardHeader>
-          <CardTitle>Sign up</CardTitle>
-          <CardDescription>Create an account to get started</CardDescription>
+          <CardTitle className='text-center text-2xl'>Sign up</CardTitle>
+          <CardDescription className='text-center text-base'>
+            Create an account to get started
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <Form {...form}>
@@ -76,21 +76,19 @@ export default function SignupPage() {
                 label='Password'
                 type='password'
               />
-              <div className='flex justify-end'>
-                <Button disabled={isPending} type='submit'>
-                  Sign up{' '}
-                  {isPending ? (
-                    <Loader className='w-4 h-4 ml-2 animate-spin' />
-                  ) : (
-                    ''
-                  )}
-                </Button>
-              </div>
+              <Button disabled={isPending} type='submit' className='w-full'>
+                Sign up{' '}
+                {isPending ? (
+                  <Loader className='w-4 h-4 ml-2 animate-spin' />
+                ) : (
+                  ''
+                )}
+              </Button>
             </form>
           </Form>
         </CardContent>
         <CardFooter className='justify-center'>
-          <p className='text-sm text-muted-foreground'>
+          <p className='text-sm'>
             Already have an account?{' '}
             <Link href='/auth/signin' className='hover:underline'>
               Sign in

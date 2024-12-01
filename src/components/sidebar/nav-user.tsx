@@ -33,9 +33,13 @@ import {
 import { User } from '@/lib/types';
 import { useSignout } from '@/hooks/auth.hooks';
 import { ResponseType } from '@/lib/constants';
+import { useState } from 'react';
+import { Button } from '@/components/ui/button';
 
 export function NavUser({ user }: { user: User | null }) {
   const router = useRouter();
+
+  const [isOpen, setIsOpen] = useState(false);
 
   const { isMobile } = useSidebar();
   const { theme, setTheme } = useTheme();
@@ -44,13 +48,13 @@ export function NavUser({ user }: { user: User | null }) {
 
   const handleLogout = async () => {
     try {
+      setIsOpen(true);
       const res = await mutateAsync();
       if (res.type === ResponseType.SUCCESS) {
         router.push('/auth/signin');
       }
-    } catch (error) {
-      console.log(error);
-    }
+      setIsOpen(false);
+    } catch (error) {}
   };
 
   const initials = user?.name
@@ -61,7 +65,7 @@ export function NavUser({ user }: { user: User | null }) {
   return (
     <SidebarMenu>
       <SidebarMenuItem>
-        <DropdownMenu>
+        <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
           <DropdownMenuTrigger asChild>
             <SidebarMenuButton
               size='lg'
@@ -99,15 +103,13 @@ export function NavUser({ user }: { user: User | null }) {
               </div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuGroup>
+            {/* <DropdownMenuGroup>
               <DropdownMenuItem>
                 <Sparkles />
                 Upgrade to Pro
               </DropdownMenuItem>
-            </DropdownMenuGroup>
-            <DropdownMenuSeparator />
-            <DropdownMenuGroup>
-              <DropdownMenuItem>
+            </DropdownMenuGroup> */}
+            {/* <DropdownMenuItem>
                 <BadgeCheck />
                 Account
               </DropdownMenuItem>
@@ -118,31 +120,30 @@ export function NavUser({ user }: { user: User | null }) {
               <DropdownMenuItem>
                 <Bell />
                 Notifications
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}
-              >
-                {theme === 'light' ? (
-                  <MoonStar className='h-[1.2rem] w-[1.2rem]' />
-                ) : (
-                  <Sun className='h-[1.2rem] w-[1.2rem]' />
-                )}
-                {theme === 'light' ? 'Dark' : 'Light'}
-              </DropdownMenuItem>
-            </DropdownMenuGroup>
-            <DropdownMenuSeparator />
+              </DropdownMenuItem> */}
             <DropdownMenuItem
+              onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}
+            >
+              {theme === 'light' ? (
+                <MoonStar className='h-[1.2rem] w-[1.2rem]' />
+              ) : (
+                <Sun className='h-[1.2rem] w-[1.2rem]' />
+              )}
+              {theme === 'light' ? 'Dark' : 'Light'}
+            </DropdownMenuItem>
+            <Button
               onClick={handleLogout}
               disabled={isPending}
-              className='cursor-pointer'
+              className='cursor-pointer w-full justify-start px-2 py-[6px] rounded-sm'
+              variant='ghost'
             >
               {isPending ? (
-                <Loader className='mr-2 size-4 animate-spin' />
+                <Loader className='size-4 animate-spin' />
               ) : (
-                <LogOut />
+                <LogOut className='size-4' />
               )}
               Log out
-            </DropdownMenuItem>
+            </Button>
           </DropdownMenuContent>
         </DropdownMenu>
       </SidebarMenuItem>

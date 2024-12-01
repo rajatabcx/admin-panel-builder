@@ -3,8 +3,8 @@ import { useMutation } from '@tanstack/react-query';
 
 export function useChat() {
   return useMutation({
-    mutationFn: async (query: string) => {
-      const stream = await nlqChat(query);
+    mutationFn: async ({ id, query }: { id: string; query: string }) => {
+      const stream = await nlqChat(id, query);
       return stream;
     },
   });

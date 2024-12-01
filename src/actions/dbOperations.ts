@@ -1,7 +1,7 @@
 'use server';
 
 import { ActionResponse, FilterColumn, SortingColumn } from '@/lib/types';
-import { getDbUrl } from './metadata';
+import { getDbUrl } from './project';
 import { ResponseType } from '@/lib/constants';
 import { Client } from 'pg';
 
@@ -11,8 +11,9 @@ const extractUsername = async (connectionString: string): Promise<string> => {
   return match ? match[1] : '';
 };
 
-const getColumns = async (schema: string, table: string) => {
-  const dbUrl = await getDbUrl();
+const getColumns = async (id: string, schema: string, table: string) => {
+  const dbUrl = await getDbUrl(id);
+  if (!dbUrl) return { columns: [], editable: false };
   const client = new Client({
     connectionString: dbUrl,
     ssl: {
@@ -70,6 +71,7 @@ const getColumns = async (schema: string, table: string) => {
 };
 
 export async function rows({
+  id,
   schema,
   table,
   sortingColumns = [],
@@ -78,6 +80,7 @@ export async function rows({
   pageSize = 10,
   universalSearch,
 }: {
+  id: string;
   schema: string;
   table: string;
   page?: number;
@@ -94,7 +97,7 @@ export async function rows({
     editable: boolean;
   }
 > {
-  const dbUrl = await getDbUrl();
+  const dbUrl = await getDbUrl(id);
   if (!table || !schema || !dbUrl)
     return {
       type: ResponseType.ERROR,
@@ -113,7 +116,7 @@ export async function rows({
     },
   });
 
-  const { columns, editable } = await getColumns(schema, table);
+  const { columns, editable } = await getColumns(id, schema, table);
 
   try {
     await client.connect();
@@ -212,16 +215,22 @@ export async function rows({
   }
 }
 
-export async function deleteRows(
-  schema: string,
-  table: string,
-  ids: string[]
-): Promise<ActionResponse> {
-  const dbUrl = await getDbUrl();
-  if (!table)
+export async function deleteRows({
+  id,
+  schema,
+  table,
+  ids,
+}: {
+  id: string;
+  schema: string;
+  table: string;
+  ids: string[];
+}): Promise<ActionResponse> {
+  const dbUrl = await getDbUrl(id);
+  if (!table || !dbUrl)
     return {
       type: ResponseType.ERROR,
-      message: 'Table is required',
+      message: 'Table or dbUrl is required',
     };
 
   const client = new Client({ connectionString: dbUrl });

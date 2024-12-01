@@ -9,6 +9,7 @@ import { useTables } from '@/hooks/metadata.hooks';
 import { Skeleton } from '@/components/ui/skeleton';
 import TableSelect from './TableSelect';
 import { Checkbox } from '@/components/ui/checkbox';
+import { useParams } from 'next/navigation';
 
 export function SelectionSchema({
   name,
@@ -20,11 +21,11 @@ export function SelectionSchema({
   setSelectedTables: Dispatch<SetStateAction<{ [key: string]: string[] }>>;
 }) {
   const [isOpen, setIsOpen] = useState(false);
-  const { data: tables, isLoading } = useTables(name, isOpen);
+  const { id } = useParams<{ id: string }>();
+  const { data: tables, isLoading } = useTables(id, name, isOpen);
   return (
     <div>
       <AccordionItem value={name} className='border-none'>
-        {' '}
         <AccordionTrigger
           className='py-2'
           onClick={() => {

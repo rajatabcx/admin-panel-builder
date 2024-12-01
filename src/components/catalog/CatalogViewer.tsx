@@ -10,7 +10,7 @@ export function CatalogViewer({
   isLoading: boolean;
 }) {
   return isLoading ? (
-    <p className='flex flex-col gap-4 justify-center h-full'>
+    <div className='flex flex-col gap-4 justify-center h-full'>
       {Array.from({ length: 20 }).map((_, index) => (
         <Skeleton
           key={index}
@@ -18,7 +18,7 @@ export function CatalogViewer({
           style={{ width: `${50 + ((index * 17) % 41)}%` }}
         />
       ))}
-    </p>
+    </div>
   ) : !!catalog.schemas.length ? (
     <pre className='text-lect'>{JSON.stringify(catalog, null, 2)}</pre>
   ) : (

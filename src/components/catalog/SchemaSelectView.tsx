@@ -5,6 +5,7 @@ import { cn } from '@/lib/utils';
 import { Accordion } from '@/components/ui/accordion';
 import { Dispatch, SetStateAction } from 'react';
 import { Button } from '../ui/button';
+import { useParams } from 'next/navigation';
 
 export function SchemaSelectView({
   selectedTables,
@@ -15,7 +16,8 @@ export function SchemaSelectView({
   setSelectedTables: Dispatch<SetStateAction<{ [key: string]: string[] }>>;
   handleGenerateCatalog: () => void;
 }) {
-  const { data, isLoading } = useSchemas();
+  const { id } = useParams<{ id: string }>();
+  const { data, isLoading } = useSchemas(id);
   return (
     <div className='h-full flex flex-col gap-4'>
       <div className='flex flex-col gap-3 overflow-x-hidden overflow-y-auto flex-1'>

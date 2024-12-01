@@ -8,29 +8,29 @@ import {
 } from '@/components/ui/sidebar';
 import { ScrollText, Settings, Sparkles } from 'lucide-react';
 
-const navMainData = [
+const navMainData = (id: string) => [
   {
     name: 'Ask AI',
-    url: '/dashboard/demo/chat',
+    url: `/dashboard/${id}/chat`,
     icon: Sparkles,
   },
   {
     name: 'Manage Catalog',
-    url: '/dashboard/demo/catalog',
+    url: `/dashboard/${id}/catalog`,
     icon: ScrollText,
   },
   {
     name: 'Settings',
-    url: '/dashboard/demo/settings',
+    url: `/dashboard/${id}/settings`,
     icon: Settings,
   },
 ];
 
-export function NavMain() {
+export function NavMain({ id }: { id: string }) {
   return (
     <SidebarGroup className='group-data-[collapsible=icon]:hidden'>
       <SidebarMenu>
-        {navMainData.map((item) => (
+        {navMainData(id).map((item) => (
           <SidebarMenuItem key={item.name}>
             <SidebarMenuButton asChild>
               <a href={item.url}>

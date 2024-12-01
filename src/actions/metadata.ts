@@ -3,15 +3,12 @@
 import { ResponseType } from '@/lib/constants';
 import { ActionResponse } from '@/lib/types';
 import { Client } from 'pg';
+import { getDbUrl } from './project';
 
-export async function getDbUrl(): Promise<string> {
-  return process.env.DATABASE_URL!;
-}
-
-export async function getSchemas(): Promise<
-  ActionResponse & { schemas: string[] }
-> {
-  const dbUrl = await getDbUrl();
+export async function getSchemas(
+  id: string
+): Promise<ActionResponse & { schemas: string[] }> {
+  const dbUrl = await getDbUrl(id);
 
   if (!dbUrl)
     return {
@@ -55,9 +52,10 @@ ORDER BY nspname;
 }
 
 export async function getTables(
+  id: string,
   schema: string
 ): Promise<ActionResponse & { tables: Array<{ name: string; type: string }> }> {
-  const dbUrl = await getDbUrl();
+  const dbUrl = await getDbUrl(id);
 
   if (!schema || !dbUrl)
     return {
@@ -110,47 +108,5 @@ export async function getTables(
     };
   } finally {
     await client.end();
-  }
-}
-
-export async function customTypeValues(
-  typeName: string
-): Promise<ActionResponse & { values: string[] }> {
-  const dbUrl = await getDbUrl();
-
-  if (!dbUrl || !typeName)
-    return {
-      type: ResponseType.ERROR,
-      message: 'Database URL and type name are required',
-      values: [],
-    };
-
-  const client = new Client({
-    connectionString: dbUrl,
-    ssl: {
-      rejectUnauthorized: false,
-    },
-  });
-
-  try {
-    await client.connect();
-    const enumQuery = `
-    SELECT e.enumlabel AS value
-    FROM pg_type t
-    JOIN pg_enum e ON t.oid = e.enumtypid
-    WHERE t.typname = $1;
-  `;
-    const enumResult = await client.query(enumQuery, [typeName]);
-    return {
-      values: enumResult.rows.map((row) => row.value),
-      type: ResponseType.SUCCESS,
-      message: 'Custom type values fetched successfully',
-    };
-  } catch (error: any) {
-    return {
-      type: ResponseType.ERROR,
-      message: error.message,
-      values: [],
-    };
   }
 }

@@ -13,9 +13,8 @@ import {
 import { NlqStatus, ResponseType } from '@/lib/constants';
 import { exampleCatalog } from '../../catalog';
 import { z } from 'zod';
-import { getDbUrl } from './metadata';
 import { Client } from 'pg';
-
+import { getDbUrl } from './project';
 const intentAnalysisPrompt = () => `
 You are an AI assistant that is an expert in SQL and database specific postgres dialect, and you are also an expert in natural language.
 
@@ -158,23 +157,25 @@ Now, generate the appropriate response based on the above instructions.
 
 `;
 
-export async function nlqChat(query: string) {
+export async function nlqChat(id: string, query: string) {
   console.log(`Started streaming SQL responses for query: ${query}`);
 
-  const stream = nlqSseWrapper(query);
+  const stream = nlqSseWrapper(id, query);
   console.log('Streaming response successfully started.');
   return stream;
 }
 
 async function* nlqSseWrapper(
+  id: string,
   query: string
 ): AsyncIterable<NLQUpdateEvent | NLQResponseEvent> {
-  for await (const event of doNlq(query)) {
+  for await (const event of doNlq(id, query)) {
     yield event; // Serialize event to JSON string
   }
 }
 
 async function* doNlq(
+  id: string,
   query: string
 ): AsyncGenerator<NLQUpdateEvent | NLQResponseEvent> {
   console.log(`Started processing query: ${query}`);
@@ -242,7 +243,7 @@ async function* doNlq(
   }
 
   yield { kind: NLQResponse.UPDATE, status: NlqStatus.EXECUTING_QUERIES };
-  const executionResult = await executeQueries(generatedQuery);
+  const executionResult = await executeQueries(id, generatedQuery);
 
   if (typeof executionResult === 'string') {
     yield {
@@ -369,13 +370,16 @@ async function generateQueries(
   }
 }
 
-async function executeQueries(sqlQuery: string) {
+async function executeQueries(id: string, sqlQuery: string) {
   console.log(`Executing query: ${sqlQuery}`);
   if (!sqlQuery.trim().toLowerCase().startsWith('select')) {
     return 'You are only allowed to execute SELECT queries.';
   }
 
-  const dbUrl = await getDbUrl();
+  const dbUrl = await getDbUrl(id);
+  if (!dbUrl) {
+    return 'An error occurred while executing the query.';
+  }
   const client = new Client({
     connectionString: dbUrl,
     ssl: {

@@ -13,12 +13,17 @@ import { Form } from '@/components/ui/form';
 import { TextInput } from '@/components/form/TextInput';
 import { ResponseType } from '@/lib/constants';
 import { ChatBubble } from '@/components/chat/ChatBubble';
+import { useParams } from 'next/navigation';
+import { useCatalogExists } from '@/hooks/catalog.hooks';
+import { NoCatalogCard } from '@/components/catalog/NoCatalogCard';
 
 const schema = z.object({
   query: z.string(),
 });
 
 export default function ChatPage() {
+  const { id } = useParams<{ id: string }>();
+
   const form = useForm<z.infer<typeof schema>>({
     resolver: zodResolver(schema),
     defaultValues: {
@@ -46,13 +51,15 @@ Your go-to platform for smarter data visualization and insights! Ready to level 
   const scrollRef = useRef<HTMLDivElement>(null);
 
   const { mutateAsync, isPending } = useChat();
+  const { data: catalogExist, isLoading: catalogIsLoading } =
+    useCatalogExists(id);
 
   const handleQuery = async (data: z.infer<typeof schema>) => {
     try {
       setLoading(true);
       setMessages((prev) => [...prev, { message: data.query, type: 'user' }]);
       form.reset();
-      const stream = await mutateAsync(data.query);
+      const stream = await mutateAsync({ id, query: data.query });
       for await (const event of stream) {
         if (event.kind === 'UPDATE') {
           setStatus(event.status);
@@ -69,7 +76,6 @@ Your go-to platform for smarter data visualization and insights! Ready to level 
         }
       }
     } catch (error) {
-      console.error(error);
       toast.error('An error occurred while processing your query.');
     } finally {
       setLoading(false);
@@ -82,7 +88,11 @@ Your go-to platform for smarter data visualization and insights! Ready to level 
     }
   }, [messages, status]);
 
-  return (
+  return catalogIsLoading || !catalogExist ? (
+    <div className='w-full h-screen flex justify-center items-center py-4'>
+      <NoCatalogCard id={id} />
+    </div>
+  ) : (
     <div className='w-full h-screen flex flex-col py-4'>
       <div className='flex-1 overflow-auto space-y-4 fancy-scrollbar px-4 pb-6'>
         {messages.map((message, index) => (

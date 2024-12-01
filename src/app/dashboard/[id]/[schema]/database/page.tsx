@@ -31,8 +31,8 @@ const nodeTypes: NodeTypes = { customTable: CustomTableNode };
 
 export default function DatabasePage() {
   const { theme } = useTheme();
-  const { schema } = useParams<{ schema: string }>();
-  const { data, isLoading } = useRelation(schema, !!schema);
+  const { schema, id } = useParams<{ schema: string; id: string }>();
+  const { data, isLoading } = useRelation(id, schema, !!schema);
 
   const { nodes: tableNodes, edges: tableEdges } = useMemo(() => {
     const nodes: CustomNode[] = Object.keys(data?.data || {}).map(

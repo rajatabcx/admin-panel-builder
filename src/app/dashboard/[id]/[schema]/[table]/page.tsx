@@ -15,7 +15,7 @@ import { ResponseType } from '@/lib/constants';
 import { toast } from 'sonner';
 
 export default function TablePage() {
-  const { table, schema } = useParams<{
+  const { id, table, schema } = useParams<{
     id: string;
     table: string;
     schema: string;
@@ -39,6 +39,7 @@ export default function TablePage() {
   const [universalSearch] = useDebounce(search, 1000);
 
   const { data, isLoading, isFetching } = useRows({
+    id,
     schema,
     table,
     page: pagination.page,

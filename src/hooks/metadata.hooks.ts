@@ -1,22 +1,22 @@
 import { getSchemas, getTables } from '@/actions/metadata';
 import { useQuery } from '@tanstack/react-query';
 
-export const useTables = (schema: string, enabled: boolean) => {
+export const useTables = (id: string, schema: string, enabled: boolean) => {
   return useQuery({
-    queryKey: ['tables', schema],
+    queryKey: ['tables', id, schema],
     queryFn: async () => {
-      const response = await getTables(schema);
+      const response = await getTables(id, schema);
       return response.tables;
     },
     enabled,
   });
 };
 
-export const useSchemas = () => {
+export const useSchemas = (id: string) => {
   return useQuery({
-    queryKey: ['schemas'],
+    queryKey: ['schemas', id],
     queryFn: async () => {
-      const response = await getSchemas();
+      const response = await getSchemas(id);
       return response.schemas;
     },
   });

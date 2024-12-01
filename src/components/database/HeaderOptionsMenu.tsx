@@ -85,13 +85,11 @@ export function HeaderOptionsMenu({
               sortingColumns={sortingColumns}
             />
           </>
-        ) : (
-          null
-        )}
+        ) : null}
         {editable ? (
           <>
             <Separator orientation='vertical' className='h-4' />
-            <Button size='sm'>
+            <Button size='sm' disabled>
               <Plus className='w-4 h-4' /> Insert
             </Button>
           </>

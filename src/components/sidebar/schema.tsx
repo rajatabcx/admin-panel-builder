@@ -25,14 +25,14 @@ export function Schema({
   defaultSchema: string;
 }) {
   const router = useRouter();
-  const { schema } = useParams<{ schema: string; id: string }>();
+  const { schema, id } = useParams<{ schema: string; id: string }>();
 
   return (
     <>
       <Select
         value={schema || defaultSchema}
         onValueChange={(value) => {
-          router.push(`/dashboard/1/${value}`);
+          router.push(`/dashboard/${id}/${value}`);
         }}
       >
         <SelectTrigger>
@@ -59,7 +59,7 @@ export function Schema({
       </Select>
       <SidebarMenuItem>
         <SidebarMenuButton tooltip='Database' asChild>
-          <Link href={`/dashboard/1/${schema || defaultSchema}/database`}>
+          <Link href={`/dashboard/${id}/${schema || defaultSchema}/database`}>
             <Database className='size-5' />
             <span>Database</span>
           </Link>
@@ -73,7 +73,7 @@ export function Schema({
               <span>Tables</span>
             </SidebarMenuButton>
           </CollapsibleTrigger>
-          <Tables selectedSchema={schema || defaultSchema} />
+          <Tables id={id} selectedSchema={schema || defaultSchema} />
         </SidebarMenuItem>
       </Collapsible>
     </>

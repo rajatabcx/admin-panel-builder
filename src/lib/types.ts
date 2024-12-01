@@ -117,3 +117,7 @@ export type User = {
   email: string;
   name: string;
 };
+
+export type Relation = {
+  [key: string]: ColumnInfo[];
+};

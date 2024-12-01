@@ -10,10 +10,17 @@ import { CollapsibleContent } from '@/components/ui/collapsible';
 import { Eye, Table2, TableColumnsSplit } from 'lucide-react';
 import Link from 'next/link';
 
-export function Tables({ selectedSchema }: { selectedSchema: string }) {
+export function Tables({
+  id,
+  selectedSchema,
+}: {
+  id: string;
+  selectedSchema: string;
+}) {
   const { data: tables, isLoading } = useTables(
+    id,
     selectedSchema,
-    !!selectedSchema
+    !!selectedSchema || !!id
   );
 
   return (
@@ -34,7 +41,7 @@ export function Tables({ selectedSchema }: { selectedSchema: string }) {
             <SidebarMenuSubItem key={table.name}>
               <SidebarMenuSubButton asChild>
                 <Link
-                  href={`/dashboard/1/${selectedSchema}/${table.name}`}
+                  href={`/dashboard/${id}/${selectedSchema}/${table.name}`}
                   className='flex items-center gap-2'
                 >
                   {table.type === 'partitioned_table' ? (

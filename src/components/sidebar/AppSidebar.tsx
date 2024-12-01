@@ -22,9 +22,9 @@ export async function AppSidebar({ id }: { id: string }) {
         <p className='text-base font-semibold'>Admin Panel Builder</p>
       </SidebarHeader>
       <SidebarContent>
-        <NavMain />
+        <NavMain id={id} />
         {/* <NavViews id={id} /> */}
-        <NavDB />
+        <NavDB id={id} />
       </SidebarContent>
       <SidebarFooter>
         <NavUser user={user} />

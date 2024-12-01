@@ -41,17 +41,17 @@ export default function SigninPage() {
       if (res.type === ResponseType.SUCCESS) {
         router.push('/dashboard');
       }
-    } catch (error) {
-      console.log(error);
-    }
+    } catch (error) {}
   };
 
   return (
     <div className='flex justify-center items-center h-screen'>
-      <Card className='w-full max-w-lg'>
+      <Card className='w-full max-w-lg bg-muted/20'>
         <CardHeader>
-          <CardTitle>Sign in</CardTitle>
-          <CardDescription>Sign in to your account to continue</CardDescription>
+          <CardTitle className='text-center text-2xl'>Sign in</CardTitle>
+          <CardDescription className='text-center text-base'>
+            Sign in to your account to continue
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <Form {...form}>
@@ -69,19 +69,15 @@ export default function SigninPage() {
                 label='Password'
                 type='password'
               />
-              <div className='flex justify-end'>
-                <Button type='submit' disabled={isPending}>
-                  Sign in{' '}
-                  {isPending && (
-                    <Loader className='ml-2 h-4 w-4 animate-spin' />
-                  )}
-                </Button>
-              </div>
+              <Button type='submit' className='w-full' disabled={isPending}>
+                Sign in
+                {isPending && <Loader className='h-4 w-4 animate-spin' />}
+              </Button>
             </form>
           </Form>
         </CardContent>
         <CardFooter className='justify-center'>
-          <p className='text-sm text-muted-foreground'>
+          <p className='text-sm'>
             Don&apos;t have an account?{' '}
             <Link href='/auth/signup' className='hover:underline'>
               Sign up

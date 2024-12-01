@@ -34,10 +34,39 @@ export type Database = {
   }
   public: {
     Tables: {
+      catalogs: {
+        Row: {
+          catalog: Json | null
+          created_at: string
+          id: number
+          project_id: string | null
+        }
+        Insert: {
+          catalog?: Json | null
+          created_at?: string
+          id?: number
+          project_id?: string | null
+        }
+        Update: {
+          catalog?: Json | null
+          created_at?: string
+          id?: number
+          project_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "catalogs_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: true
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       projects: {
         Row: {
           created_at: string
-          dbConnectionString: string | null
+          db_connection_url: string | null
           description: string | null
           id: string
           name: string | null
@@ -45,7 +74,7 @@ export type Database = {
         }
         Insert: {
           created_at?: string
-          dbConnectionString?: string | null
+          db_connection_url?: string | null
           description?: string | null
           id?: string
           name?: string | null
@@ -53,7 +82,7 @@ export type Database = {
         }
         Update: {
           created_at?: string
-          dbConnectionString?: string | null
+          db_connection_url?: string | null
           description?: string | null
           id?: string
           name?: string | null

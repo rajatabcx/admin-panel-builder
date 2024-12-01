@@ -2,7 +2,7 @@
 
 import { createClient } from '@/lib/supabase/server';
 import { ActionResponse, Project } from '@/lib/types';
-import { encrypt } from './encryption';
+import { decrypt, encrypt } from './encryption';
 import { ResponseType } from '@/lib/constants';
 import { currentUser } from './user';
 
@@ -32,7 +32,7 @@ export async function createProject(
     .insert({
       name: project.name,
       description: project.description,
-      dbConnectionString: encryptedConnectionString,
+      db_connection_url: encryptedConnectionString,
       user_id: user.id,
     })
     .select('id')
@@ -74,8 +74,6 @@ export async function getProjects(): Promise<{
     .eq('user_id', user.id)
     .order('created_at', { ascending: false });
 
-  console.log(data);
-
   if (error || !data) {
     return {
       projects: [],
@@ -85,4 +83,48 @@ export async function getProjects(): Promise<{
   return {
     projects: data,
   };
+}
+
+export async function getProjectDetails(
+  id: string
+): Promise<{ name: string | null; description: string | null } | null> {
+  const user = await currentUser();
+
+  if (!user) {
+    return null;
+  }
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from('projects')
+    .select('name, description')
+    .eq('id', id)
+    .single();
+
+  if (error || !data) {
+    return null;
+  }
+
+  return data;
+}
+
+export async function getDbUrl(id: string): Promise<string | null> {
+  const user = await currentUser();
+  if (!user) {
+    return null;
+  }
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from('projects')
+    .select('db_connection_url')
+    .eq('id', id)
+    .eq('user_id', user.id)
+    .single();
+
+  if (error || !data || !data.db_connection_url) {
+    return null;
+  }
+
+  const decryptedConnectionString = await decrypt(data.db_connection_url);
+
+  return decryptedConnectionString;
 }
