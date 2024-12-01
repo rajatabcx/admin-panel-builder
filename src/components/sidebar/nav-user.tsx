@@ -5,13 +5,16 @@ import {
   Bell,
   ChevronsUpDown,
   CreditCard,
+  Loader,
   LogOut,
   MoonStar,
   Sparkles,
   Sun,
 } from 'lucide-react';
+import { useTheme } from 'next-themes';
+import { useRouter } from 'next/navigation';
 
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -27,17 +30,33 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from '@/components/ui/sidebar';
-import { useTheme } from 'next-themes';
+import { User } from '@/lib/types';
+import { useSignout } from '@/hooks/auth.hooks';
+import { ResponseType } from '@/lib/constants';
 
-const user = {
-  name: 'Rajat Mondal',
-  email: 'rajat.abcx@gmail.com',
-  avatar: '/avatars/shadcn.jpg',
-};
+export function NavUser({ user }: { user: User | null }) {
+  const router = useRouter();
 
-export function NavUser() {
   const { isMobile } = useSidebar();
   const { theme, setTheme } = useTheme();
+
+  const { mutateAsync, isPending } = useSignout();
+
+  const handleLogout = async () => {
+    try {
+      const res = await mutateAsync();
+      if (res.type === ResponseType.SUCCESS) {
+        router.push('/auth/signin');
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const initials = user?.name
+    .split(' ')
+    .map((n) => n[0])
+    .join('');
 
   return (
     <SidebarMenu>
@@ -49,12 +68,13 @@ export function NavUser() {
               className='data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground'
             >
               <Avatar className='h-8 w-8 rounded-lg'>
-                <AvatarImage src={user.avatar} alt={user.name} />
-                <AvatarFallback className='rounded-lg'>CN</AvatarFallback>
+                <AvatarFallback className='rounded-lg'>
+                  {initials}
+                </AvatarFallback>
               </Avatar>
               <div className='grid flex-1 text-left text-sm leading-tight'>
-                <span className='truncate font-semibold'>{user.name}</span>
-                <span className='truncate text-xs'>{user.email}</span>
+                <span className='truncate font-semibold'>{user?.name}</span>
+                <span className='truncate text-xs'>{user?.email}</span>
               </div>
               <ChevronsUpDown className='ml-auto size-4' />
             </SidebarMenuButton>
@@ -68,12 +88,13 @@ export function NavUser() {
             <DropdownMenuLabel className='p-0 font-normal'>
               <div className='flex items-center gap-2 px-1 py-1.5 text-left text-sm'>
                 <Avatar className='h-8 w-8 rounded-lg'>
-                  <AvatarImage src={user.avatar} alt={user.name} />
-                  <AvatarFallback className='rounded-lg'>CN</AvatarFallback>
+                  <AvatarFallback className='rounded-lg'>
+                    {initials}
+                  </AvatarFallback>
                 </Avatar>
                 <div className='grid flex-1 text-left text-sm leading-tight'>
-                  <span className='truncate font-semibold'>{user.name}</span>
-                  <span className='truncate text-xs'>{user.email}</span>
+                  <span className='truncate font-semibold'>{user?.name}</span>
+                  <span className='truncate text-xs'>{user?.email}</span>
                 </div>
               </div>
             </DropdownMenuLabel>
@@ -110,8 +131,16 @@ export function NavUser() {
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
-              <LogOut />
+            <DropdownMenuItem
+              onClick={handleLogout}
+              disabled={isPending}
+              className='cursor-pointer'
+            >
+              {isPending ? (
+                <Loader className='mr-2 size-4 animate-spin' />
+              ) : (
+                <LogOut />
+              )}
               Log out
             </DropdownMenuItem>
           </DropdownMenuContent>

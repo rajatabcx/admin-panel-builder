@@ -1,5 +1,5 @@
-import React from 'react';
-import { Plus } from 'lucide-react';
+import React, { useState } from 'react';
+import { Loader, Plus } from 'lucide-react';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
@@ -16,8 +16,15 @@ import { Button } from '@/components/ui/button';
 import { createProjectSchema } from '@/lib/validationSchema';
 import { Form } from '@/components/ui/form';
 import { TextInput } from '@/components/form/TextInput';
+import { useCreateProject } from '@/hooks/project.hooks';
+import { useRouter } from 'next/navigation';
+import { ResponseType } from '@/lib/constants';
 
 export default function CreateProject() {
+  const router = useRouter();
+
+  const [open, setOpen] = useState(false);
+
   const form = useForm<z.infer<typeof createProjectSchema>>({
     resolver: zodResolver(createProjectSchema),
     defaultValues: {
@@ -27,12 +34,23 @@ export default function CreateProject() {
     },
   });
 
+  const { mutateAsync, isPending } = useCreateProject();
+
   const onSubmit = async (data: z.infer<typeof createProjectSchema>) => {
-    console.log(data);
+    try {
+      const res = await mutateAsync(data);
+      if (res.type === ResponseType.SUCCESS) {
+        form.reset();
+        router.push(`/dashboard/${res.projectId}`);
+        setOpen(false);
+      }
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button>
           Create Project <Plus className='w-4 h-4' />
@@ -68,7 +86,14 @@ export default function CreateProject() {
               label='Project Description'
             />
             <div className='flex justify-end mt-2'>
-              <Button type='submit'>Create Project</Button>
+              <Button type='submit' disabled={isPending}>
+                Create Project
+                {isPending ? (
+                  <Loader className='w-4 h-4 ml-2 animate-spin' />
+                ) : (
+                  ''
+                )}
+              </Button>
             </div>
           </form>
         </Form>

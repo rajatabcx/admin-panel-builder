@@ -35,7 +35,7 @@ export default function ChatPage() {
   >([
     {
       message: `
-Welcome to ADP 🚀  
+Welcome to APB 🚀  
 Your go-to platform for smarter data visualization and insights! Ready to level up your workflow? Let’s dive in!  
 `,
       type: 'bot',

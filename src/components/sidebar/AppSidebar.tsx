@@ -10,8 +10,11 @@ import {
   SidebarHeader,
 } from '@/components/ui/sidebar';
 import { NavViews } from './nav-views';
+import { currentUser } from '@/actions/user';
 
 export async function AppSidebar({ id }: { id: string }) {
+  const user = await currentUser();
+
   return (
     <Sidebar collapsible='icon'>
       <SidebarHeader className='flex items-center gap-2 flex-row py-4'>
@@ -24,7 +27,7 @@ export async function AppSidebar({ id }: { id: string }) {
         <NavDB />
       </SidebarContent>
       <SidebarFooter>
-        <NavUser />
+        <NavUser user={user} />
       </SidebarFooter>
     </Sidebar>
   );

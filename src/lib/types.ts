@@ -111,3 +111,9 @@ export type Project = {
   description: string;
   connectionString: string;
 };
+
+export type User = {
+  id: string;
+  email: string;
+  name: string;
+};
