@@ -235,6 +235,6 @@ export const catalog = async (
   return {
     type: ResponseType.SUCCESS,
     message: 'Catalog fetched successfully',
-    data: data.catalog,
+    data: data.catalog as Catalog,
   };
 };
