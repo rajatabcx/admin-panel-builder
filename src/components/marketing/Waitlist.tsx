@@ -44,7 +44,7 @@ export default function Waitlist() {
             placeholder='Enter your email'
           />
         </div>
-        <Button type='submit' className='group w-fit' disabled={isPending}>
+        <Button type='submit' className='group  sm:w-fit' disabled={isPending}>
           Join Waitlist
           {isPending ? (
             <Loader className='size-4 animate-spin' />

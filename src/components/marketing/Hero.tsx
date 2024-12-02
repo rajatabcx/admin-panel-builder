@@ -8,7 +8,7 @@ import Waitlist from './Waitlist';
 export const Hero = () => {
   return (
     <BackgroundLines>
-      <section className='w-full py-24 px-6 md:px-12 lg:px-24'>
+      <section className='w-full py-24 px-6 md:px-12 lg:px-24 flex flex-col items-center justify-center h-full'>
         <div className='container text-center'>
           <div className='z-10 flex min-h-28 items-center justify-center'>
             <AnimatedGradientText>
