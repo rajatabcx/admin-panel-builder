@@ -36,6 +36,7 @@
     "crypto": "^1.0.1",
     "dagre": "^0.8.5",
     "date-fns": "^4.1.0",
+    "framer-motion": "^11.12.0",
     "i": "^0.3.7",
     "lucide-react": "^0.460.0",
     "next": "15.0.3",
