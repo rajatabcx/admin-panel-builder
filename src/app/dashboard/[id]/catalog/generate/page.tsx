@@ -72,7 +72,7 @@ export default function CatalogGeneratePage() {
 
   return (
     <div className='flex h-full md:gap-6 xl:gap-10 justify-center p-4'>
-      {!catalog.schemas.length ? (
+      {!catalog.schemas.length || isLoading ? (
         <SchemaSelectView
           selectedTables={selectedTables}
           setSelectedTables={setSelectedTables}

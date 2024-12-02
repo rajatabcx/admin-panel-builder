@@ -1,4 +1,5 @@
 'use client';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { QueryProvider } from './QueryProvider';
@@ -14,6 +15,7 @@ export default function Providers({ children }: { children: React.ReactNode }) {
           <Toaster richColors />
         </TooltipProvider>
       </ThemeProvider>
+      <ReactQueryDevtools initialIsOpen={false} />
     </QueryProvider>
   );
 }

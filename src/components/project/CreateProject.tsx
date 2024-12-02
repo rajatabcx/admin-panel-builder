@@ -19,6 +19,7 @@ import { TextInput } from '@/components/form/TextInput';
 import { useCreateProject, useTestConnection } from '@/hooks/project.hooks';
 import { useRouter } from 'next/navigation';
 import { ResponseType } from '@/lib/constants';
+import { useQueryClient } from '@tanstack/react-query';
 
 export default function CreateProject() {
   const router = useRouter();
@@ -35,6 +36,7 @@ export default function CreateProject() {
     },
   });
 
+  const queryClient = useQueryClient();
   const { mutateAsync, isPending } = useCreateProject();
   const { mutateAsync: testConnection, isPending: isTesting } =
     useTestConnection();
@@ -44,6 +46,7 @@ export default function CreateProject() {
       const res = await mutateAsync(data);
       if (res.type === ResponseType.SUCCESS) {
         form.reset();
+        queryClient.invalidateQueries({ queryKey: ['projects'] });
         router.push(`/dashboard/${res.projectId}`);
         setOpen(false);
       }

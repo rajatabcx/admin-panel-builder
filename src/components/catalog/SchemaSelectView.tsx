@@ -1,13 +1,13 @@
+import { Dispatch, SetStateAction } from 'react';
+import { useParams } from 'next/navigation';
+import { ChevronRight, Loader } from 'lucide-react';
+
 import { SelectionSchema } from './SelectionSchema';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useSchemas } from '@/hooks/metadata.hooks';
 import { cn } from '@/lib/utils';
 import { Accordion } from '@/components/ui/accordion';
-import { Dispatch, SetStateAction } from 'react';
-import { Button } from '../ui/button';
-import { useParams } from 'next/navigation';
-import { ChevronRight, Loader } from 'lucide-react';
-import { Catalog } from '@/lib/types';
+import { Button } from '@/components/ui/button';
 
 export function SchemaSelectView({
   selectedTables,

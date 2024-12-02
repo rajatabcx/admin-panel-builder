@@ -8,6 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useUpdateCatalog } from '@/hooks/catalog.hooks';
 import { useRouter } from 'next/navigation';
+import { useQueryClient } from '@tanstack/react-query';
 
 export default function AddDescriptionView({
   projectId,
@@ -19,6 +20,7 @@ export default function AddDescriptionView({
   setCatalog: Dispatch<SetStateAction<Catalog>>;
 }) {
   const router = useRouter();
+  const queryClient = useQueryClient();
   const debounced = useDebouncedCallback(
     (value: string, schema: string, table?: string) => {
       setCatalog((prev) => {
@@ -53,6 +55,7 @@ export default function AddDescriptionView({
   const handleUpdateCatalog = async () => {
     try {
       await updateCatalog({ projectId, catalog });
+      queryClient.invalidateQueries({ queryKey: ['catalog', projectId] });
       router.push(`/dashboard/${projectId}/catalog`);
     } catch (error) {
       console.error(error);
