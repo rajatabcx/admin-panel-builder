@@ -1,12 +1,12 @@
 'use client';
 
-import React, { useState } from 'react';
-import { CatalogViewer } from '@/components/catalog/CatalogViewer';
+import React, { useEffect, useState } from 'react';
 import { SchemaSelectView } from '@/components/catalog/SchemaSelectView';
 import { Catalog, ColumnInfo } from '@/lib/types';
 import { specificTableSchemaRelation } from '@/actions/catalog';
 import { useParams } from 'next/navigation';
-import { Separator } from '@/components/ui/separator';
+import AddDescriptionView from '@/components/catalog/AddDescriptionView';
+import { useCatalog } from '@/hooks/catalog.hooks';
 
 export default function CatalogGeneratePage() {
   const { id } = useParams<{ id: string }>();
@@ -19,6 +19,9 @@ export default function CatalogGeneratePage() {
   });
   const [isLoading, setIsLoading] = useState(false);
 
+  const { data: existingCatalog, isLoading: loadingExistingCatalog } =
+    useCatalog(id, !!id);
+
   const handleGenerateCatalog = async () => {
     setIsLoading(true);
     for (const schema in selectedTables) {
@@ -29,13 +32,17 @@ export default function CatalogGeneratePage() {
           ...prev.schemas,
           {
             name: schema,
-            description: '',
+            description:
+              existingCatalog?.schemas.find((s) => s.name === schema)
+                ?.description ?? '',
             tables: Object.keys(response.data).map((key) => ({
               name: key,
-              description: '',
+              description:
+                existingCatalog?.schemas
+                  .find((s) => s.name === schema)
+                  ?.tables.find((t) => t.name === key)?.description ?? '',
               columns: response.data[key].map((column: ColumnInfo) => ({
                 name: column.columnName,
-                description: '',
                 columnType: column.columnType,
                 isNullable: column.isNullable,
                 isPrimaryKey: column.isPrimaryKey,
@@ -53,19 +60,33 @@ export default function CatalogGeneratePage() {
     setIsLoading(false);
   };
 
+  useEffect(() => {
+    if (!!existingCatalog && !loadingExistingCatalog) {
+      const selectedTables = existingCatalog.schemas.reduce((acc, schema) => {
+        acc[schema.name] = schema.tables.map((table) => table.name);
+        return acc;
+      }, {} as { [key: string]: string[] });
+      setSelectedTables(selectedTables);
+    }
+  }, [existingCatalog, loadingExistingCatalog]);
+
   return (
-    <div className='flex h-full md:gap-6 xl:gap-10 justify-between p-4'>
-      <div className='w-[40%]'>
+    <div className='flex h-full md:gap-6 xl:gap-10 justify-center p-4'>
+      {!catalog.schemas.length ? (
         <SchemaSelectView
           selectedTables={selectedTables}
           setSelectedTables={setSelectedTables}
           handleGenerateCatalog={handleGenerateCatalog}
+          isLoading={isLoading}
+          loadingExistingCatalog={loadingExistingCatalog}
         />
-      </div>
-      <Separator orientation='vertical' />
-      <div className='flex-1 overflow-y-auto'>
-        <CatalogViewer projectId={id} catalog={catalog} isLoading={isLoading} />
-      </div>
+      ) : (
+        <AddDescriptionView
+          projectId={id}
+          catalog={catalog}
+          setCatalog={setCatalog}
+        />
+      )}
     </div>
   );
 }

@@ -6,25 +6,47 @@ import { Accordion } from '@/components/ui/accordion';
 import { Dispatch, SetStateAction } from 'react';
 import { Button } from '../ui/button';
 import { useParams } from 'next/navigation';
+import { ChevronRight, Loader } from 'lucide-react';
+import { Catalog } from '@/lib/types';
 
 export function SchemaSelectView({
   selectedTables,
   setSelectedTables,
   handleGenerateCatalog,
+  isLoading,
+  loadingExistingCatalog,
 }: {
   selectedTables: { [key: string]: string[] };
   setSelectedTables: Dispatch<SetStateAction<{ [key: string]: string[] }>>;
   handleGenerateCatalog: () => void;
+  isLoading: boolean;
+  loadingExistingCatalog: boolean;
 }) {
   const { id } = useParams<{ id: string }>();
-  const { data, isLoading } = useSchemas(id);
+  const { data, isLoading: loadingSchemas } = useSchemas(id);
+
   return (
-    <div className='h-full flex flex-col gap-4'>
-      <h1 className='text-2xl font-semibold'>
-        Select necessary schemas and tables
-      </h1>
-      <div className='flex flex-col gap-3 overflow-x-hidden overflow-y-auto flex-1'>
-        {isLoading ? (
+    <div className='h-full flex flex-col gap-4 flex-1 items-center max-w-2xl'>
+      <div className='flex justify-between items-center gap-4 w-full'>
+        <h1 className='text-base lg:text-xl font-semibold'>
+          Select necessary schemas and tables
+        </h1>
+        <Button
+          variant='secondary'
+          onClick={handleGenerateCatalog}
+          disabled={isLoading || !Object.keys(selectedTables).length}
+          className='group'
+        >
+          Next Step{' '}
+          {isLoading ? (
+            <Loader className='animate-spin size-4' />
+          ) : (
+            <ChevronRight className='size-4 group-hover:translate-x-1 transition-transform' />
+          )}
+        </Button>
+      </div>
+      <div className='flex flex-col gap-3 flex-1 w-full'>
+        {loadingSchemas || loadingExistingCatalog ? (
           Array.from({ length: 10 }).map((_, index) => (
             <Skeleton
               key={index}
@@ -46,11 +68,6 @@ export function SchemaSelectView({
             ))}
           </Accordion>
         )}
-      </div>
-      <div className='flex items-center justify-center gap-2'>
-        <Button variant='secondary' onClick={handleGenerateCatalog}>
-          Generate Catalog
-        </Button>
       </div>
     </div>
   );

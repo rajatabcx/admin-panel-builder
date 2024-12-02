@@ -93,7 +93,6 @@ export type Table = {
 
 export type Column = {
   name: string;
-  description: string;
   columnType: string;
   isNullable: boolean;
   isPrimaryKey: boolean;
