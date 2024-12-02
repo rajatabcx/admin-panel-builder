@@ -15,25 +15,27 @@ export function Security() {
           Security First
         </h2>
       </div>
-      <ShineBorder
-        className="relative overflow-hidden rounded-lg border md:shadow-xl bg-card/60 backdrop-blur-sm max-w-3xl mx-auto"
-        color={["#A07CFE", "#FE8FB5", "#FFBE7B"]}
-      >
-        <Card className="max-w-3xl mx-auto border-none bg-transparent">
-          <CardHeader className="text-center">
-            <Shield className="w-16 h-16 text-primary mx-auto mb-4" />
-            <CardTitle className="text-2xl !mb-4">
-              Your Data, Your Control
-            </CardTitle>
-            <CardDescription className="text-base">
-              We take your security seriously. Your database connection string
-              is encrypted, and we can't access it. We're also implementing an
-              even stronger encryption method that will be unique to each user,
-              giving you full control over your data security.
-            </CardDescription>
-          </CardHeader>
-        </Card>
-      </ShineBorder>
+      <div className="flex justify-center items-center w-full">
+        <ShineBorder
+          className="relative overflow-hidden rounded-lg border md:shadow-xl bg-card/60 backdrop-blur-sm max-w-3xl"
+          color={["#A07CFE", "#FE8FB5", "#FFBE7B"]}
+        >
+          <Card className="max-w-3xl mx-auto border-none bg-transparent">
+            <CardHeader className="text-center">
+              <Shield className="w-16 h-16 text-primary mx-auto mb-4" />
+              <CardTitle className="text-2xl !mb-4">
+                Your Data, Your Control
+              </CardTitle>
+              <CardDescription className="text-base">
+                We take your security seriously. Your database connection string
+                is encrypted, and we can't access it. We're also implementing an
+                even stronger encryption method that will be unique to each
+                user, giving you full control over your data security.
+              </CardDescription>
+            </CardHeader>
+          </Card>
+        </ShineBorder>
+      </div>
     </section>
   );
 }
