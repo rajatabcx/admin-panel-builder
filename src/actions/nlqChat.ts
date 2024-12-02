@@ -11,10 +11,11 @@ import {
   NLQUpdateEvent,
 } from '@/lib/types';
 import { NlqStatus, ResponseType } from '@/lib/constants';
-import { exampleCatalog } from '../../catalog';
 import { z } from 'zod';
 import { Client } from 'pg';
 import { getDbUrl } from './project';
+import { catalog } from './catalog';
+
 const intentAnalysisPrompt = () => `
 You are an AI assistant that is an expert in SQL and database specific postgres dialect, and you are also an expert in natural language.
 
@@ -196,7 +197,33 @@ async function* doNlq(
 
   // Get the relevant records for the rephrased query
   yield { kind: NLQResponse.UPDATE, status: NlqStatus.RELEVANT_TABLES };
-  const { relevantRecords: records } = await relevantRecords(rephrasedQuery);
+  const catalogResponse = await catalog(id);
+
+  if (!catalogResponse || !catalogResponse.data) {
+    yield {
+      kind: NLQResponse.RESPONSE,
+      type: 'TEXT',
+      payload: 'Oops! Failed to get catalog, please retry.',
+      responseType: ResponseType.ERROR,
+    };
+    return;
+  }
+
+  const catalogData = catalogResponse.data;
+
+  const schemas = catalogData.schemas.map((schema) => ({
+    name: schema.name,
+    description: schema.description,
+    tables: schema.tables.map((table) => ({
+      name: table.name,
+      description: table.description,
+    })),
+  }));
+
+  const { relevantRecords: records } = await relevantRecords(
+    rephrasedQuery,
+    schemas
+  );
 
   // If no relevant records are found, return an error response
   if (records.length === 0) {
@@ -212,9 +239,7 @@ async function* doNlq(
   // Get the relevant data for the rephrased query
   const relevantData = records
     .map((record) => {
-      const schema = exampleCatalog.schemas.find(
-        (s) => s.name === record.schema
-      );
+      const schema = catalogData.schemas.find((s) => s.name === record.schema);
       const data = record.tables.map((tableName) => {
         const table = schema?.tables.find((t) => t.name === tableName);
         return {
@@ -304,18 +329,16 @@ async function intentAnalysis(query: string): Promise<{
 }
 
 async function relevantRecords(
-  query: string
+  query: string,
+  schemas: {
+    name: string;
+    description: string;
+    tables: { name: string; description: string }[];
+  }[]
 ): Promise<{ relevantRecords: { schema: string; tables: string[] }[] }> {
   console.log(`Getting relevant records for query: ${query}`);
   const modifiedCatalog: Catalog = {
-    schemas: exampleCatalog.schemas.map((schema) => ({
-      name: schema.name,
-      description: schema.description,
-      tables: schema.tables.map((table) => ({
-        name: table.name,
-        description: table.description,
-      })),
-    })),
+    schemas,
   };
 
   try {

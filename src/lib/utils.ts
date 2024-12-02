@@ -193,3 +193,35 @@ export function determineRelationType(
     return 'ONE_TO_MANY';
   }
 }
+
+export const handlePage = (
+  pathname: string,
+  schema?: string,
+  table?: string
+): string | string[] => {
+  if (pathname.includes('chat')) return 'Chat';
+
+  if (pathname.includes('catalog')) {
+    if (pathname.includes('generate')) {
+      return ['Catalog', 'Generate'];
+    }
+    return 'Catalog';
+  }
+
+  if (pathname.includes('settings')) return 'Settings';
+
+  if (schema) {
+    if (table) {
+      const updatedTableName = table.charAt(0).toUpperCase() + table.slice(1);
+      return [
+        schema.charAt(0).toUpperCase() + schema.slice(1),
+        updatedTableName.split('_').join(' '),
+      ];
+    } else if (pathname.includes('database')) {
+      return [schema.charAt(0).toUpperCase() + schema.slice(1), 'Database'];
+    }
+    return schema.charAt(0).toUpperCase() + schema.slice(1);
+  }
+
+  return 'Dashboard';
+};

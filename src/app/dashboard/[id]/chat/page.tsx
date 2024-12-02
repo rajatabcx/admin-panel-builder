@@ -16,6 +16,7 @@ import { ChatBubble } from '@/components/chat/ChatBubble';
 import { useParams } from 'next/navigation';
 import { useCatalogExists } from '@/hooks/catalog.hooks';
 import { NoCatalogCard } from '@/components/catalog/NoCatalogCard';
+import { Skeleton } from '@/components/ui/skeleton';
 
 const schema = z.object({
   query: z.string(),
@@ -88,7 +89,17 @@ Your go-to platform for smarter data visualization and insights! Ready to level 
     }
   }, [messages, status]);
 
-  return catalogIsLoading || !catalogExist ? (
+  return catalogIsLoading ? (
+    <div className='w-full h-full flex flex-col justify-between p-4'>
+      <div className='flex flex-col gap-4'>
+        <Skeleton className='w-[75%] h-[100px]' />
+        <Skeleton className='w-[75%] h-16 ml-auto' />
+        <Skeleton className='w-[75%] h-16' />
+        <Skeleton className='w-[75%] h-16 ml-auto' />
+      </div>
+      <Skeleton className='w-full h-9' />
+    </div>
+  ) : !catalogExist ? (
     <div className='w-full h-full flex justify-center items-center py-4'>
       <NoCatalogCard id={id} />
     </div>

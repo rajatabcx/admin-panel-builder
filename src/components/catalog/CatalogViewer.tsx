@@ -69,6 +69,9 @@ export function CatalogViewer({
       <ReactJson
         src={existingCatalog}
         theme={theme === 'dark' ? 'railscasts' : 'rjv-default'}
+        enableClipboard={false}
+        displayDataTypes={false}
+        displayObjectSize={false}
       />
     </div>
   ) : (
