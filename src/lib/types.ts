@@ -121,3 +121,9 @@ export type User = {
 export type Relation = {
   [key: string]: ColumnInfo[];
 };
+
+export type Feature = {
+  title: string;
+  description: string;
+  icon: React.ReactNode;
+};

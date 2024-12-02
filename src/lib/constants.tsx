@@ -1,4 +1,12 @@
-import { FilterOperatorSymbol } from './types';
+import { Feature, FilterOperatorSymbol } from './types';
+import {
+  BarChart3,
+  Database,
+  Eye,
+  Lock,
+  MessagesSquare,
+  Table,
+} from 'lucide-react';
 
 export enum ResponseType {
   SUCCESS = 'success',
@@ -50,3 +58,39 @@ export enum NlqStatus {
   RELEVANT_TABLES = 'Finding relevant tables...',
   INTENT_ANALYSIS = 'Analyzing intent...',
 }
+
+export const features: Feature[] = [
+  {
+    title: 'Natural Language Query',
+    description: 'Chat with your database using simple, natural language.',
+    icon: <MessagesSquare className='size-4 md:size-6' />,
+  },
+  {
+    title: 'Database Visualizer',
+    description: 'Visualize your database architecture and connections.',
+    icon: <Database className='size-4 md:size-6' />,
+  },
+  {
+    title: 'Smart Table View',
+    description:
+      'Sort and filter data with modes for technical and non-technical users.',
+    icon: <Table className='size-4 md:size-6' />,
+  },
+  {
+    title: 'Customizable Context',
+    description: "Limit the chatbot's access to specific tables and schemas.",
+    icon: <Eye className='size-4 md:size-6' />,
+  },
+  {
+    title: 'Views (Coming Soon)',
+    description:
+      'Save queries and generate custom views as tables, cards, or graphs.',
+    icon: <BarChart3 className='size-4 md:size-6' />,
+  },
+  {
+    title: 'Secure Connection',
+    description:
+      'Your database connection string is encrypted and inaccessible to us.',
+    icon: <Lock className='size-4 md:size-6' />,
+  },
+];

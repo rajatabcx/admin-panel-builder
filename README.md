@@ -94,6 +94,7 @@ what is the rating and whats the review and who left that lowest rating, give me
 the user details list of all the products from high to low price in electronics
 category
 
-- Update the db connection string from camelCase to snake_case
-- Manage catalog fix
 - Create the description part of the schema
+- create header with title and description, project details and breadcrumbs in
+  dashboard page
+- test connection if fail tigger the db connection string error
