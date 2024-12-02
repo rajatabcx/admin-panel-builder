@@ -19,7 +19,7 @@ export default async function page({
 }) {
   const { id, schema } = await params;
   return (
-    <div className='w-full h-screen overflow-hidden flex justify-center items-center'>
+    <div className='w-full h-full overflow-hidden flex justify-center items-center'>
       <ShineBorder
         className='relative flex flex-col items-center justify-center overflow-hidden rounded-lg border md:shadow-xl bg-card/60 backdrop-blur-sm'
         color={['#A07CFE', '#FE8FB5', '#FFBE7B']}
@@ -28,7 +28,7 @@ export default async function page({
           <CardHeader>
             <CardTitle className='text-2xl font-semibold'>Schema</CardTitle>
             <CardDescription className='text-muted-foreground'>
-              Select database or a table from the navigation panel on the left
+              Select database or a table from the navigation panel on the left{' '}
               to view its data, or create a new one.
             </CardDescription>
           </CardHeader>

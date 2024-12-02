@@ -1,4 +1,3 @@
-'use client';
 import React from 'react';
 import { Hero } from '@/components/marketing/Hero';
 import { Features } from '@/components/marketing/Features';

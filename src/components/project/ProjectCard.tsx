@@ -9,6 +9,7 @@ import {
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
 import { buttonVariants } from '../ui/button';
+import { ChevronRight } from 'lucide-react';
 
 export default function ProjectCard({
   id,
@@ -20,14 +21,18 @@ export default function ProjectCard({
   description: string | null;
 }) {
   return (
-    <Card className='bg-muted/20'>
-      <CardHeader>
+    <Card className='bg-muted/20 flex flex-col justify-between'>
+      <CardHeader className='flex-1'>
         <CardTitle>{name}</CardTitle>
         <CardDescription>{description}</CardDescription>
       </CardHeader>
       <CardFooter className='flex justify-end'>
-        <Link href={`/dashboard/${id}`} className={cn(buttonVariants())}>
+        <Link
+          href={`/dashboard/${id}`}
+          className={cn(buttonVariants(), 'group')}
+        >
           View Project
+          <ChevronRight className='size-4 group-hover:translate-x-1 transition-all' />
         </Link>
       </CardFooter>
     </Card>

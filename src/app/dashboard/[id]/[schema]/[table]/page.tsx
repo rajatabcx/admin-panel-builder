@@ -76,7 +76,7 @@ export default function TablePage() {
   }, [engineerMode]);
 
   return (
-    <div className='w-full h-screen'>
+    <div className='w-full h-full'>
       {/* header options menu */}
       {!!selected.length ? (
         <SelectedHeaderOptions

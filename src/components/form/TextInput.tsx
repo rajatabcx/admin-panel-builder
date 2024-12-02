@@ -126,7 +126,7 @@ export function TextInput<T extends FieldValues>({
               </div>
             )}
           </FormControl>
-          <FormMessage />
+          <FormMessage className='text-left' />
         </FormItem>
       )}
     />

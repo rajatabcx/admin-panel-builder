@@ -63,34 +63,34 @@ export const features: Feature[] = [
   {
     title: 'Natural Language Query',
     description: 'Chat with your database using simple, natural language.',
-    icon: <MessagesSquare className='size-4 md:size-6' />,
+    icon: <MessagesSquare className='size-5' />,
   },
   {
     title: 'Database Visualizer',
     description: 'Visualize your database architecture and connections.',
-    icon: <Database className='size-4 md:size-6' />,
+    icon: <Database className='size-5' />,
   },
   {
     title: 'Smart Table View',
     description:
       'Sort and filter data with modes for technical and non-technical users.',
-    icon: <Table className='size-4 md:size-6' />,
+    icon: <Table className='size-5' />,
   },
   {
     title: 'Customizable Context',
     description: "Limit the chatbot's access to specific tables and schemas.",
-    icon: <Eye className='size-4 md:size-6' />,
+    icon: <Eye className='size-5' />,
   },
   {
     title: 'Views (Coming Soon)',
     description:
       'Save queries and generate custom views as tables, cards, or graphs.',
-    icon: <BarChart3 className='size-4 md:size-6' />,
+    icon: <BarChart3 className='size-5' />,
   },
   {
     title: 'Secure Connection',
     description:
       'Your database connection string is encrypted and inaccessible to us.',
-    icon: <Lock className='size-4 md:size-6' />,
+    icon: <Lock className='size-5' />,
   },
 ];

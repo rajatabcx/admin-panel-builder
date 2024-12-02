@@ -17,9 +17,11 @@ export async function AppSidebar({ id }: { id: string }) {
 
   return (
     <Sidebar collapsible='icon'>
-      <SidebarHeader className='flex items-center gap-2 flex-row py-4'>
+      <SidebarHeader className='flex items-center group-data-[collapsible=icon]:justify-center flex-row py-4 gap-2'>
         <Command className='size-5' />
-        <p className='text-base font-semibold'>Admin Panel Builder</p>
+        <p className='text-base font-semibold group-data-[collapsible=icon]:hidden'>
+          Admin Panel Builder
+        </p>
       </SidebarHeader>
       <SidebarContent>
         <NavMain id={id} />

@@ -1,6 +1,10 @@
 import { useMutation, useQuery } from '@tanstack/react-query';
 
-import { createProject, getProjects } from '@/actions/project';
+import {
+  createProject,
+  getProjectDetails,
+  getProjects,
+} from '@/actions/project';
 import { Project } from '@/lib/types';
 import { handleResponse } from '@/lib/handleResponse';
 import { testConnection } from '@/actions/debug';
@@ -10,6 +14,17 @@ export const useProjects = () => {
     queryKey: ['projects'],
     queryFn: async () => {
       const response = await getProjects();
+      return response;
+    },
+  });
+};
+
+export const useProject = (id: string, enabled: boolean) => {
+  return useQuery({
+    queryKey: ['project', id],
+    enabled,
+    queryFn: async () => {
+      const response = await getProjectDetails(id);
       return response;
     },
   });

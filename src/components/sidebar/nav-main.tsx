@@ -28,11 +28,11 @@ const navMainData = (id: string) => [
 
 export function NavMain({ id }: { id: string }) {
   return (
-    <SidebarGroup className='group-data-[collapsible=icon]:hidden'>
+    <SidebarGroup>
       <SidebarMenu>
         {navMainData(id).map((item) => (
           <SidebarMenuItem key={item.name}>
-            <SidebarMenuButton asChild>
+            <SidebarMenuButton tooltip={item.name} asChild>
               <a href={item.url}>
                 <item.icon className='size-5' />
                 <span>{item.name}</span>

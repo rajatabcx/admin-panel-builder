@@ -12,8 +12,6 @@ import { cn, formatCellValue } from '@/lib/utils';
 import { Checkbox } from '@/components/ui/checkbox';
 import ExpandedData from './ExpandedData';
 import { Card } from '@/components/ui/card';
-import { ArrowUpDown } from 'lucide-react';
-import { Button } from '@/components/ui/button';
 import SortingMenu from './SortingMenu';
 import { SortingColumn } from '@/lib/types';
 

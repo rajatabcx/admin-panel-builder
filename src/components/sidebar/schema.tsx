@@ -35,7 +35,7 @@ export function Schema({
           router.push(`/dashboard/${id}/${value}`);
         }}
       >
-        <SelectTrigger>
+        <SelectTrigger className='group-data-[collapsible=icon]:hidden'>
           <SelectValue placeholder='Select a schema' />
         </SelectTrigger>
         <SelectContent>

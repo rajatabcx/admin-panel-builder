@@ -1,12 +1,11 @@
 import React from 'react';
-import { Filter, LayoutGrid, Plus, Table } from 'lucide-react';
+import { LayoutGrid, Plus, Table } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { Toggle } from '@/components/ui/toggle';
 import { cn } from '@/lib/utils';
 import SortBuilder from './SortBuilder';
-import { SidebarTrigger } from '@/components/ui/sidebar';
 import { FilterColumn, SortingColumn } from '@/lib/types';
 import FilterBuilder from './FilterBuilder';
 import { Input } from '@/components/ui/input';
@@ -37,8 +36,6 @@ export function HeaderOptionsMenu({
   return (
     <div className='flex items-center justify-between w-full px-4 py-3 border-b bg-background'>
       <div className='flex items-center gap-2'>
-        <SidebarTrigger className='block md:hidden' />
-
         <Toggle
           variant='outline'
           size='sm'
@@ -51,7 +48,7 @@ export function HeaderOptionsMenu({
         >
           <Table className='w-4 h-4' /> Table
         </Toggle>
-        <Toggle
+        {/* <Toggle
           variant='outline'
           size='sm'
           pressed={view === 'card'}
@@ -62,7 +59,7 @@ export function HeaderOptionsMenu({
           )}
         >
           <LayoutGrid className='w-4 h-4' /> Card
-        </Toggle>
+        </Toggle> */}
       </div>
       <div className='flex items-center gap-2'>
         {engineerMode ? null : (

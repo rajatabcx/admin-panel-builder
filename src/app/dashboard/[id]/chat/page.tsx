@@ -89,11 +89,11 @@ Your go-to platform for smarter data visualization and insights! Ready to level 
   }, [messages, status]);
 
   return catalogIsLoading || !catalogExist ? (
-    <div className='w-full h-screen flex justify-center items-center py-4'>
+    <div className='w-full h-full flex justify-center items-center py-4'>
       <NoCatalogCard id={id} />
     </div>
   ) : (
-    <div className='w-full h-screen flex flex-col py-4'>
+    <div className='w-full h-full flex flex-col py-4'>
       <div className='flex-1 overflow-auto space-y-4 fancy-scrollbar px-4 pb-6'>
         {messages.map((message, index) => (
           <ChatBubble

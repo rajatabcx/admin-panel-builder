@@ -15,14 +15,14 @@ import { ShineBorder } from '@/components/magic-ui/shine-border';
 
 export default function SettingsPage() {
   return (
-    <div className='w-full h-screen overflow-hidden flex justify-center items-center'>
+    <div className='w-full h-full overflow-hidden flex justify-center items-center'>
       <ShineBorder
         className='relative w-full max-w-xl flex flex-col items-center justify-center overflow-hidden rounded-lg border md:shadow-xl bg-card/60 backdrop-blur-sm'
         color={['#A07CFE', '#FE8FB5', '#FFBE7B']}
       >
         <Card className='rounded-lg border-none bg-transparent'>
           <CardHeader>
-            <CardTitle className='text-2xl font-semibold mb-5'>
+            <CardTitle className='text-2xl font-semibold mb-5 flex gap-2 items-center'>
               Under Construction <Construction className='size-5' />
             </CardTitle>
             <CardDescription className='text-muted-foreground'>
