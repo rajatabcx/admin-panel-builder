@@ -424,14 +424,8 @@ async function executeQueries(id: string, sqlQuery: string) {
   }
 }
 
-async function generateResponse(
-  query: string,
-  data: any[] | string
-): Promise<string> {
+async function generateResponse(query: string, data: any[]): Promise<string> {
   console.log(`Generating response for query: ${query}`);
-  if (typeof data === 'string') {
-    return data;
-  }
 
   try {
     const response = await generateText({
