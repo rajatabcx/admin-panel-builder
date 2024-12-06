@@ -13,7 +13,7 @@ export function HowToUse() {
   React.useEffect(() => {
     const timer = setInterval(() => {
       setCurrentStep((prev) => (prev + 1) % steps.length);
-    }, 5100);
+    }, 5120);
 
     return () => clearInterval(timer);
   }, []);
