@@ -12,6 +12,11 @@ const poppins = Poppins({
 export const metadata: Metadata = {
   title: 'DataDock',
   description: 'DataDock | Your Database, Your Way',
+  openGraph: {
+    title: 'DataDock',
+    description: 'DataDock | Your Database, Your Way',
+    images: [`${process.env.NEXT_PUBLIC_BASE_URL}/how-it-works/use.png`],
+  },
 };
 
 export default function RootLayout({
