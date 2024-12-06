@@ -41,7 +41,7 @@ export default function ChatPage() {
   >([
     {
       message: `
-Welcome to APB 🚀  
+Welcome to DataDock AI 🚀  
 Your go-to platform for smarter data visualization and insights! Ready to level up your workflow? Let’s dive in!  
 `,
       type: 'bot',

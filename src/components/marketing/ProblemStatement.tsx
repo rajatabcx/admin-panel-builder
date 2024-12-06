@@ -2,7 +2,7 @@ import { problems } from '@/lib/constants';
 
 export const ProblemStatement = () => {
   return (
-    <div className='py-16 px-6 md:px-12 lg:px-24 bg-primary-foreground h-screen flex items-center justify-center'>
+    <div className='py-16 px-6 md:px-12 lg:px-24 h-screen flex items-center justify-center'>
       <div>
         <div className='mb-10 md:mb-20'>
           <p className='text-sm font-medium tracking-wider text-muted-foreground uppercase mb-4 text-center'>

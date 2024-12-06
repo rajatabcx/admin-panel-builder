@@ -10,8 +10,8 @@ const poppins = Poppins({
 });
 
 export const metadata: Metadata = {
-  title: 'APB | DataGrip',
-  description: 'APB | DataGrip',
+  title: 'DataDock',
+  description: 'DataDock | Your Database, Your Way',
 };
 
 export default function RootLayout({

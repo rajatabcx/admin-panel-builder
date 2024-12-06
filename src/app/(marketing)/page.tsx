@@ -12,7 +12,7 @@ export default function page() {
       <Hero />
       <ProblemStatement />
       <Features />
-      <Solutions />
+      {/* <Solutions /> */}
       <HowToUse />
       <Security />
     </main>
