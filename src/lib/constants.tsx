@@ -9,6 +9,12 @@ import {
   Upload,
   Zap,
   LineChart,
+  BarChartHorizontal,
+  BatteryCharging,
+  CircleHelp,
+  Layers,
+  WandSparkles,
+  ZoomIn,
 } from 'lucide-react';
 
 export enum ResponseType {
@@ -117,5 +123,26 @@ export const steps: Step[] = [
     description: "That's it! You can now do anything now.",
     icon: LineChart,
     image: '/how-it-works/use.png',
+  },
+];
+
+export const problems = [
+  {
+    title: 'Time and Financial Drain',
+    description:
+      'Building and maintaining a database is a time-consuming and expensive process. It requires a lot of resources and expertise.',
+    icon: <ZoomIn className='size-5' />,
+  },
+  {
+    title: 'Expensive Solutions',
+    description:
+      'Traditional database management solutions are expensive and they have a learning curve that everyone has to learn.',
+    icon: <BarChartHorizontal className='size-5' />,
+  },
+  {
+    title: 'Dependency on Tech Teams',
+    description:
+      'Database management is a complex task that requires a lot of technical expertise. You may need to check one data but it takes time as you are dependent on tech teams.',
+    icon: <CircleHelp className='size-5' />,
   },
 ];
