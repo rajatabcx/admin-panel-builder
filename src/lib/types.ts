@@ -126,3 +126,10 @@ export type Feature = {
   description: string;
   icon: React.ReactNode;
 };
+
+export type Step = {
+  title: string;
+  description: string;
+  icon: React.ElementType;
+  image: string;
+};

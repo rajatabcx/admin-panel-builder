@@ -1,4 +1,4 @@
-import { Feature, FilterOperatorSymbol } from './types';
+import { Feature, FilterOperatorSymbol, Step } from './types';
 import {
   BarChart3,
   Database,
@@ -6,6 +6,9 @@ import {
   Lock,
   MessagesSquare,
   Table,
+  Upload,
+  Zap,
+  LineChart,
 } from 'lucide-react';
 
 export enum ResponseType {
@@ -92,5 +95,27 @@ export const features: Feature[] = [
     description:
       'Your database connection string is encrypted and inaccessible to us.',
     icon: <Lock className='size-5' />,
+  },
+];
+
+export const steps: Step[] = [
+  {
+    title: '1. Create an account',
+    description: 'Sign up for free to get started. No credit card required.',
+    icon: Upload,
+    image: '/how-it-works/signup.png',
+  },
+  {
+    title: '2. Create a new project',
+    description:
+      'Add your database connection string to get started. We only support PostgreSQL.',
+    icon: Zap,
+    image: '/how-it-works/create.png',
+  },
+  {
+    title: '3. Manage your Database',
+    description: "That's it! You can now do anything now.",
+    icon: LineChart,
+    image: '/how-it-works/use.png',
   },
 ];
