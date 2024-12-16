@@ -128,7 +128,7 @@ const responseGenerationPrompt = (data: any[]) => `
 You are an AI assistant that analyzes SQL query results and generates natural language responses. 
 
 Analyze the query result and generate a response based on the data.
-The query result is a JSON array of objects. its returned by the pg package.
+The query result is a JSON array of objects. its returned by the "pg" npm package.
 The response should be a markdown formatted string.
 The response should reflect the data in a way that is easy to understand.
 
@@ -150,9 +150,9 @@ be careful with the data types, don't mix up the data types in the response.
 If the data is empty, it doesn't mean that the query failed, it just means that the query returned no data so don't say "No data found", generate a response based on the data and query.
 
 Here is the query result:
-<Queryresult>
+<queryResult>
 ${JSON.stringify(data, null, 2)}
-</Queryresult>
+</queryResult>
 
 Now, generate the appropriate response based on the above instructions.
 
@@ -428,6 +428,8 @@ async function generateResponse(query: string, data: any[]): Promise<string> {
   console.log(`Generating response for query: ${query}`);
 
   try {
+    console.log('Inside try block');
+    console.log(`prompt: ${responseGenerationPrompt(data)}`);
     const response = await generateText({
       model: openai('gpt-4o-mini'),
       system: responseGenerationPrompt(data),
@@ -438,6 +440,7 @@ async function generateResponse(query: string, data: any[]): Promise<string> {
         },
       ],
     });
+    console.log('Response: ', response);
     console.log(
       `Response generation response: ${JSON.stringify(response.text)}`
     );
