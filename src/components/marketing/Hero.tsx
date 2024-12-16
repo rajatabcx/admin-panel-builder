@@ -5,6 +5,7 @@ import { cn } from '@/lib/utils';
 import { AnimatedGradientText } from '@/components/magic-ui/animated-gradient-text';
 import { BackgroundLines } from '@/components/aceternity-ui/background-lines';
 import { User } from '@/lib/types';
+import { buttonVariants } from '../ui/button';
 
 export const Hero = ({ user }: { user: User | null }) => {
   return (
@@ -37,17 +38,11 @@ export const Hero = ({ user }: { user: User | null }) => {
             </p>
             <div className='relative'>
               {user ? (
-                <Link
-                  href='/dashboard'
-                  className='bg-primary text-white px-4 py-2 rounded-md'
-                >
+                <Link href='/dashboard' className={cn(buttonVariants())}>
                   Dashboard
                 </Link>
               ) : (
-                <Link
-                  href='/auth/signup'
-                  className='bg-primary text-white px-4 py-2 rounded-md'
-                >
+                <Link href='/auth/signup' className={cn(buttonVariants())}>
                   Get Started
                 </Link>
               )}
