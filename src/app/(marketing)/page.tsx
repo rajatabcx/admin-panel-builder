@@ -5,11 +5,13 @@ import { HowToUse } from '@/components/marketing/HowToUse';
 import { Security } from '@/components/marketing/Security';
 import { ProblemStatement } from '@/components/marketing/ProblemStatement';
 import { Solutions } from '@/components/marketing/Solution';
+import { currentUser } from '@/actions/user';
 
-export default function page() {
+export default async function page() {
+  const user = await currentUser();
   return (
     <main className='min-h-screen bg-background'>
-      <Hero />
+      <Hero user={user} />
       <ProblemStatement />
       <Features />
       {/* <Solutions /> */}

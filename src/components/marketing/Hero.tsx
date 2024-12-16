@@ -1,11 +1,12 @@
 import { ChevronRight } from 'lucide-react';
+import Link from 'next/link';
 
 import { cn } from '@/lib/utils';
 import { AnimatedGradientText } from '@/components/magic-ui/animated-gradient-text';
 import { BackgroundLines } from '@/components/aceternity-ui/background-lines';
-import Waitlist from './Waitlist';
+import { User } from '@/lib/types';
 
-export const Hero = () => {
+export const Hero = ({ user }: { user: User | null }) => {
   return (
     <BackgroundLines>
       <section className='w-full py-24 px-6 md:px-12 lg:px-24 flex flex-col items-center justify-center h-full'>
@@ -35,10 +36,21 @@ export const Hero = () => {
               Built for both Techies & Non-Techies
             </p>
             <div className='relative'>
-              <Waitlist />
-              <p className='mt-4 text-sm text-muted-foreground'>
-                Be the first to know when we launch!
-              </p>
+              {user ? (
+                <Link
+                  href='/dashboard'
+                  className='bg-primary text-white px-4 py-2 rounded-md'
+                >
+                  Dashboard
+                </Link>
+              ) : (
+                <Link
+                  href='/auth/signup'
+                  className='bg-primary text-white px-4 py-2 rounded-md'
+                >
+                  Get Started
+                </Link>
+              )}
             </div>
           </div>
         </div>
