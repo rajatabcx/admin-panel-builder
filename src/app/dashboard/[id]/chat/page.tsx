@@ -23,6 +23,8 @@ const schema = z.object({
   query: z.string(),
 });
 
+export const maxDuration = 120;
+
 export default function ChatPage() {
   const { id } = useParams<{ id: string }>();
 
