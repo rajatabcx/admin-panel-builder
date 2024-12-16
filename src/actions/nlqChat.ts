@@ -1,6 +1,12 @@
 'use server';
 
-import { generateObject, generateText } from 'ai';
+import {
+  CoreTool,
+  generateObject,
+  generateText,
+  streamText,
+  StreamTextResult,
+} from 'ai';
 import { openai } from '@ai-sdk/openai';
 
 import {
@@ -281,24 +287,16 @@ async function* doNlq(
   }
 
   yield { kind: NLQResponse.UPDATE, status: NlqStatus.GENERATING_RESPONSE };
-  const response = await generateResponse(query, executionResult);
+  const { textStream } = generateResponse(query, executionResult);
 
-  if (!response) {
+  for await (const text of textStream) {
     yield {
       kind: NLQResponse.RESPONSE,
       type: 'TEXT',
-      payload: 'Oops! Failed to generate response, please retry.',
-      responseType: ResponseType.ERROR,
+      payload: text,
+      responseType: ResponseType.SUCCESS,
     };
-    return;
   }
-
-  yield {
-    kind: NLQResponse.RESPONSE,
-    type: 'TEXT',
-    payload: response,
-    responseType: ResponseType.SUCCESS,
-  };
 }
 
 async function intentAnalysis(query: string): Promise<{
@@ -424,30 +422,21 @@ async function executeQueries(id: string, sqlQuery: string) {
   }
 }
 
-async function generateResponse(query: string, data: any[]): Promise<string> {
+function generateResponse(
+  query: string,
+  data: any[]
+): StreamTextResult<Record<string, CoreTool<any, any>>> {
   console.log(`Generating response for query: ${query}`);
 
-  try {
-    console.log('Inside try block');
-    console.log(`prompt: ${responseGenerationPrompt(data)}`);
-    const response = await generateText({
-      model: openai('gpt-4o-mini'),
-      system: responseGenerationPrompt(data),
-      messages: [
-        {
-          role: 'user',
-          content: `Generate a response to the user query: ${query}`,
-        },
-      ],
-    });
-    console.log('Response: ', response);
-    console.log(
-      `Response generation response: ${JSON.stringify(response.text)}`
-    );
-    return response.text;
-  } catch (error) {
-    console.log(`Error generating response for query: ${query}`);
-    console.error('Error generating response:', error);
-    return 'An error occurred while generating the response.';
-  }
+  const response = streamText({
+    model: openai('gpt-4o-mini'),
+    system: responseGenerationPrompt(data),
+    messages: [
+      {
+        role: 'user',
+        content: `Generate a response to the user query: ${query}`,
+      },
+    ],
+  });
+  return response;
 }

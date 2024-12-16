@@ -17,6 +17,7 @@ import { useParams } from 'next/navigation';
 import { useCatalogExists } from '@/hooks/catalog.hooks';
 import { NoCatalogCard } from '@/components/catalog/NoCatalogCard';
 import { Skeleton } from '@/components/ui/skeleton';
+import { NLQResponse } from '@/lib/types';
 
 const schema = z.object({
   query: z.string(),
@@ -62,18 +63,30 @@ Your go-to platform for smarter data visualization and insights! Ready to level 
       form.reset();
       const stream = await mutateAsync({ id, query: data.query });
       for await (const event of stream) {
-        if (event.kind === 'UPDATE') {
+        if (event.kind === NLQResponse.UPDATE) {
           setStatus(event.status);
-        } else if (event.kind === 'RESPONSE') {
+        } else if (event.kind === NLQResponse.RESPONSE) {
           setStatus('');
-          setMessages((prev) => [
-            ...prev,
-            {
-              message: event.payload,
-              type: 'bot',
-              responseType: event.responseType,
-            },
-          ]);
+          setMessages((prev) => {
+            if (prev[prev.length - 1].type === 'bot') {
+              return [
+                ...prev.slice(0, -1),
+                {
+                  message: prev[prev.length - 1].message + event.payload,
+                  type: 'bot',
+                  responseType: event.responseType,
+                },
+              ];
+            }
+            return [
+              ...prev,
+              {
+                message: event.payload,
+                type: 'bot',
+                responseType: event.responseType,
+              },
+            ];
+          });
         }
       }
     } catch (error) {
