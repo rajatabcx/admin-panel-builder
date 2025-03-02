@@ -1,100 +1,108 @@
-dasboard will be per table
+[![Contributors](https://img.shields.io/badge/Contributors-2-brightgreen)](#contributors)
 
-so each dashboard is like wwe are managing team from that specific table and
-all, we are searching for that one table only, views are for that one table
+## ✨ Contributors
 
-if we add one more table, we will add one more dashboard, which will be
-accesible from the sidebar
+Special thanks to [@srijit-ops](https://github.com/srijit-ops) for her
+significant contributions to DataDock! Her expertise in UI development and
+creative ideas have been instrumental in shaping this project. Her contributions
+include:
 
-people can creae either table or card or graph from a specific query, that they
-can arrange , when they create a view, it will be empty, whenver they opne a
-view it it will be refreshed, and they will also have the otion to edit and
-refresh a card to see current data card type will be graph or table or card
+- Enhancing the user interface and experience
+- Contributing valuable product ideas and features
+- Helping shape the overall direction of the project
 
-a database dashboard willl have normally settings for managing access and search
-or chat for nlq
+# DataDock - Admin Panel Builder
 
-a outer dahsboard will ahve home with all the db connected, ad teacm to manage
-team,it wont be side bar, it will be hear option
+DataDock is a powerful, user-friendly database management tool that simplifies
+the way you interact with your PostgreSQL databases. It allows both technical
+and non-technical users to connect, visualize, and manage databases
+effortlessly.
 
-```json
-{
-  "table_catalog": "postgres",
-  "table_schema": "public",
-  "table_name": "courses",
-  "column_name": "id",
-  "ordinal_position": 1,
-  "column_default": "gen_random_uuid()",
-  "is_nullable": "NO",
-  "data_type": "uuid",
-  "character_maximum_length": null,
-  "character_octet_length": null,
-  "numeric_precision": null,
-  "numeric_precision_radix": null,
-  "numeric_scale": null,
-  "datetime_precision": null,
-  "interval_type": null,
-  "interval_precision": null,
-  "character_set_catalog": null,
-  "character_set_schema": null,
-  "character_set_name": null,
-  "collation_catalog": null,
-  "collation_schema": null,
-  "collation_name": null,
-  "domain_catalog": null,
-  "domain_schema": null,
-  "domain_name": null,
-  "udt_catalog": "postgres",
-  "udt_schema": "pg_catalog",
-  "udt_name": "uuid",
-  "scope_catalog": null,
-  "scope_schema": null,
-  "scope_name": null,
-  "maximum_cardinality": null,
-  "dtd_identifier": "1",
-  "is_self_referencing": "NO",
-  "is_identity": "NO",
-  "identity_generation": null,
-  "identity_start": null,
-  "identity_increment": null,
-  "identity_maximum": null,
-  "identity_minimum": null,
-  "identity_cycle": "NO",
-  "is_generated": "NEVER",
-  "generation_expression": null,
-  "is_updatable": "YES"
-}
-```
+## 🚀 Features
 
-````js
+- **Natural Language Search**: Chat with your database using simple, natural
+  language
+- **Database Visualizer**: Visualize your database architecture, connections,
+  and more in an interactive diagram
+- **Smart Table View**: Sort and filter data with modes for technical and
+  non-technical users
+- **Customizable Context**: Limit the chatbot's access to specific tables and
+  schemas
+- **Views (Coming Soon)**: Save queries and generate custom views as tables,
+  cards, or graphs
+- **Secure Connection**: Your database connection string is encrypted and
+  inaccessible to us
 
-arr.map((row) => ({
-          tableName: row.table_name,
-          columnName: row.column_name,
-          columnType: row.udt_name,
-          isNullable: row.is_nullable,
-          isPrimaryKey: row.is_primary_key,
-          isUnique: row.is_unique,
-          isForeignKey: row.is_foreign_key,
-          ...(row.is_foreign_key && {
-            foreign_key_reference: {
-              table: row.referenced_table,
-              column: row.referenced_column,
-            },
-          }),
-        }))```
-````
+## 🔧 Getting Started
 
-<!-- generate sql query -->
+### Prerequisites
 
-<!-- OR use full text search with the to_tsvector and to_tsquery functions, if possible. -->
+- Node.js (v18 or higher)
+- npm or yarn
+- PostgreSQL database
 
-Which products don't have a review? also which products has he lowest review,
-what is the rating and whats the review and who left that lowest rating, give me
-the user details list of all the products from high to low price in electronics
-category
+### Installation
 
-- Create the description part of the schema
-- create header with title and description, project details and breadcrumbs in
-  dashboard page
-- test connection if fail tigger the db connection string error
+1. Clone the repository
+
+   ```bash
+   git clone https://github.com/yourusername/admin-panel-builder.git
+   cd admin-panel-builder
+   ```
+
+2. Install dependencies
+
+   ```bash
+   npm install
+   # or
+   yarn install
+   ```
+
+3. Set up environment variables Create a `.env.local` file in the root directory
+   with the following variables:
+
+   ```
+   # Your environment variables here
+   ```
+
+4. Run the development server
+
+   ```bash
+   npm run dev
+   # or
+   yarn dev
+   ```
+
+5. Open [http://localhost:3000](http://localhost:3000) in your browser
+
+## 🧰 How to Use
+
+1. **Create an account**: Sign up for free to get started
+2. **Create a new project**: Add your PostgreSQL database connection string
+3. **Manage your Database**: Explore your database, run queries, and create
+   custom views
+
+## 💻 Tech Stack
+
+- **Frontend**: Next.js, React, TypeScript, Tailwind CSS
+- **UI Components**: Radix UI, Shadcn UI
+- **State Management**: React Query
+- **Database**: PostgreSQL, Supabase
+- **Authentication**: Supabase Auth
+- **Deployment**: Vercel (recommended)
+
+## 🤝 Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+## 📝 License
+
+This project is licensed under the [MIT License](LICENSE).
+
+## 🙏 Acknowledgements
+
+- [Next.js](https://nextjs.org/)
+- [Tailwind CSS](https://tailwindcss.com/)
+- [Radix UI](https://www.radix-ui.com/)
+- [Supabase](https://supabase.io/)
+- [React Query](https://tanstack.com/query/latest)
